@@ -1,0 +1,30 @@
+# 正则学习
+
+## 加重
+
+词边界 `\b`
+
+url 参数转对象
+
+m 多行匹配
+
+非贪婪匹配，`?`，例如`/.+?\s/.exec("Your time is limited.")`匹配“Your ”
+
+## 练习
+
+URL 转对象（对象转 URL，压缩 URL）
+
+- 检查正则正确性；
+- 默认对象；
+- 重复参数的数组对象。
+
+## 引用
+
+- [网站 regexper](https://regexper.com/)——以图形形式展示正则；
+- [老姚丨洞见生产者](https://www.zhihu.com/people/qdlaoyao/posts)——常发布正则相关文章的知乎账户。
+- [JS正则表达式完整教程（略长）](https://juejin.cn/post/6844903487155732494)
+
+相关链接：
+
+- [javascript正则深入以及10个非常有意思的正则实战](https://zhuanlan.zhihu.com/p/139711396)
+- [实现一个简单的模板引擎](http://www.alloyteam.com/2016/10/implement-a-simple-template-engine/)

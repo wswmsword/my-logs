@@ -1,0 +1,472 @@
+# 数据埋点（二）
+
+{{TOC}}
+
+这是我在旺仔俱乐部小程序上的埋点实践，小程序使用`uniapp`开发。
+
+## 场景
+
+埋点场景：
+- 按钮点击；
+- 弹窗进入、退出；
+- 页面进入、离开、停留；
+- 页面分享出去、分享进入；
+- 程序逻辑。
+
+我在俱乐部碰到的埋点可以归结成上面几种场景，下面对每种场景做简单举例。
+
+按钮点击：登录按钮的点击埋点，不需要知道用户是否同意或拒绝登录，仅点击即埋点；广告 banner 的点击埋点；底部导航栏的点击埋点。
+
+弹窗进入、退出：首次进入时首页的弹窗；扫码出现的弹窗。
+
+页面进入、离开、停留：每个页面的进入退出停留埋点；1. 进入首页进行首页进入埋点；2. 点击“会员码”页面，进行首页离开埋点；3. 同时“会员码”页面进行进入埋点；4. 停留在“会员码”页面后每 10s 进行一次停留埋点。
+
+页面分享出去、分享进入埋点：点击分享进行埋点，分享进入链接会携带分享参数，拿到参数进行分享进入埋点。
+
+程序逻辑：代码执行到某种条件内进行埋点，如果这种条件通过点击触发可以反映到 ui 上，又可以转换为第一种按钮点击的情况；如果埋点是在后端接口的 api 中，这种埋点就更适合服务端执行。
+
+## 做法
+
+### 埋点的内容
+
+埋点的内容保存在一个或多个文件中，埋点的组件或者函数会在被执行的时候从这些文件中找到具体的埋点内容。
+
+可以根据埋点规模和团队习惯来确定埋点内容的保存方式，是分散在每一个埋点处，还是提取到一个文件中，还是分类至多个文件中。
+
+俱乐部使用的保存方式是把埋点内容分类至多个文件中。
+
+### 埋点的执行
+
+我的实践中具体进行埋点的时候会涉及到的组件和函数：
+
+组件：`clicker-tracking`，`viewer-tracking`。
+
+函数：`sendEventTagByDomId`，`sendEventTagByHardId`。
+
+使用说明：
+- 组件`clicker-tracking`包裹在按钮组件外，点击进行按钮点击埋点；
+- 组件`viewer-tracking`放在弹窗组件内，弹窗展示进行弹窗进入埋点，弹窗关闭进行退出埋点；
+- 组件`viewer-tracking`放在页面中，进行页面进入、离开、停留埋点；
+- 点击分享的时候在程序中调用`sendEventTagByHardId`埋点，分享进入的时候检测链接的分享参数，调用`sendEventTagByHardId` 进行分享进入埋点；
+- 程序逻辑中调用`sendEventTagByHardId`进行埋点。
+
+## 解释
+
+### 组件 clicker-tracking
+
+组件`clicker-tracking`的`vue`实现放在最后。
+
+组件套在按钮上的样子：
+
+```vue
+<clicker-tracking
+  :eid="eventId"
+  :scope="eventScopeCode"
+  :data="{
+    snackBtnName: eventBtnName,
+  }">
+  <button
+    @click="goSnackCenter"
+    class="clean_btn btn_icon"
+    :style="{
+      backgroundImage: 'url(' + iconImg + ')',
+    }" />
+</clicker-tracking>
+```
+
+可以看到我要向组件传递 3 个参数，`eid`和`scope`来定位具体的埋点内容，`data`用来传递埋点内容需要的变量，这个例子里需要的是按钮的名称，这里按钮的名称是根据状态改变的，所以传递了`eventBtnName`这个变量。
+
+### 组件 viewer-tracking
+
+组件`viewer-tracking`的`vue`实现放在最后。
+
+组件放在页面中的样子：
+
+```
+<viewer-tracking :sharedData="{ pageName: '每日签到' }" />
+```
+
+这里的作用是“每日签到”页面的埋点，进入埋点、离开埋点和停留埋点。
+
+如果不想要停留埋点，就像这样：
+
+```
+<viewer-tracking :sharedData="{ pageName: '每日签到' }" disableStay />
+```
+
+从组件的`props`可以看到，和组件`clicker-tracking`差不多，也使用`scope`和`enterId`、`stayId`、`leaveId`来定位具体的埋点内容，`enterData`、`stayData`、`leaveData`用来传递埋点内容需要的变量，而且有`disable`属性用来控制关闭进入、停留或离开埋点，这是为了适应有的页面不用记录停留埋点的需求。（代码块中的`sharedData`是`enterData`、`stayData`、`leaveData`的封装，最后的组件实现中有解释。）
+
+这个组件还有些特殊的地方，它的执行总会跟随组件的`绑定`状态。页面进入和离开可以看成是页面的`绑定`和`解绑`，弹窗的弹出和关闭可以看成是弹窗的`绑定`和`解绑`，所以这个组件要可以监听到这种状态。这就是组件里`watch`的`isBinded`的作用，还有生命周期`mounted `和`beforeDestroy`的作用，`isBinded`具体的实现我放在最后。
+
+### 函数 sendEventTagByDomId 和 sendEventTagByHardId
+
+如果我们用有逻辑和无逻辑划分页面，逻辑脚本是属于有逻辑的，页面结构是属于无逻辑的。组件来配合页面结构埋点，而函数就配合逻辑脚本进行埋点。
+
+`sendEventTagByDomId`和`sendEventTagByDomId`进行埋点时要传递的参数和组件属性差不多，就像这样：
+
+```javascript
+this.sendEventTagByDomId({
+  e,
+  scope: SC.LOGIN_BY_PHONE_BTN,
+  data: {
+    prevPageTitle: this.prevPageTitle,
+    btnName: '立即登录',
+  },
+})
+```
+
+```javascript
+this.sendEventTagByHardId({
+  id: 'login_back',
+  scope: SC.LOGIN_BY_PHONE_BTN,
+  data: {
+    prevPageTitle: this.prevPageTitle,
+    btnName: '返回',
+  }
+})
+```
+
+它们都需要`scope`和`id`、`e`来定位具体的埋点内容，`data`来传递埋点内容需要的变量。两个函数不同的是函数名称和入参`e`与`id`，从名称中的`DomId`和`HardId`能看出来，一个和页面 DOM 有关，另一个和硬编码的 id 有关，下面是`sendEventTagByDomId`放在程序环境中的样子：
+
+```
+// 省略非埋点内容......
+// === 结构部分 ===
+<view class="func_wrapper" id="login_btn" @click.capture="track($event)">
+  <get-phone-number-vue v-if="agreedPolicies" @todoAfterLoggedIn="toDoAfterLoggedIn">
+    <view slot="content" class="btn_login red">立即登录</view>
+  </get-phone-number-vue>
+  <button v-else class="btn_login red" @click="showPolicyToast">立即登录</button>
+</view>
+// 省略非埋点内容......
+// === 脚本部分 ===
+track(e) {
+  this.sendEventTagByDomId({
+    e,
+    scope: SC.LOGIN_BY_PHONE_BTN,
+    data: {
+      prevPageTitle: this.prevPageTitle,
+      btnName: '立即登录',
+    },
+  })
+}
+// 省略非埋点内容......
+```
+
+可以看到标签上的`id`属性，函数`sendEventTagByDomId`的入参`e`取的就是这个`id`，`sendEventTagByDomId`最终会被转化为`sendEventTagByHardId`，就像这样：
+
+```
+function _sendEventTagByDomId(sendEventTagByHardId, { scope, e, data }) {
+  const id = e.currentTarget.id
+  sendEventTagByHardId({ scope, id, data })
+}
+```
+
+## 注意
+
+埋点的请求不应该占用太多资源，浏览器有请求数量限制，所以不可以让埋点请求挂起太长时间，导致真正的业务请求被阻塞。可以设置 1s 后不返回就关闭请求，也可以设置埋点的请求队列，推迟，在不再有业务请求的空闲时进行埋点。
+
+埋点抛出的错误不能停止程序的运行，要在内部捕获错误。
+
+埋点的请求可以不用携带`cookie`、`session`等和业务有关的请求头信息，结合上面的注意点，另外封装埋点的 http 请求函数会更方便。
+
+不应该让这些规则复杂，停止炫技，不能让团队成员感到困惑。
+
+## 其它
+
+### 组件 viewer-tracking 的实现
+
+```vue
+<template>
+  <view @click.capture="trackIt">
+    <slot />
+  </view>
+</template>
+
+<script>
+import { mapActions } from 'vuex'
+/**点击打点组件 */
+export default {
+  props: {
+    /**对应了`scope-code.js`里的值 */
+    scope: {
+      type: String,
+      default: '',
+    },
+    /**每个打点内容的 id，在`libs/tracking/event-tracking-config/xxx/yyy.js`里定义 */
+    eid: {
+      type: String,
+      default: '',
+    },
+    /**每个打点的内容，在`libs/tracking/event-tracking-config/xxx/yyy.js`里定义 */
+    data: {
+      type: Object,
+      default: {},
+    }
+  },
+  methods: {
+    ...mapActions(['sendEventTagByHardId']),
+    trackIt() {
+      this.sendEventTagByHardId({
+        scope: this.scope,
+        id: this.eid,
+        data: this.data,
+      })
+    },
+  },
+}
+</script>
+```
+
+### 组件 viewer-tracking 的 vue 实现
+
+```vue
+<template>
+  <view />
+</template>
+
+<script>
+import { mapActions } from 'vuex'
+import SC from '@/libs/tracking/scope-code'
+import { timeFormatter } from '@/libs/tracking/tracking-helper'
+/**页面浏览打点组件 */
+export default {
+  name: 'ViewerTracking',
+  data() {
+    return {
+      pulseTimer: null,
+      isMounted: false,
+      curPagePath: null,
+    }
+  },
+  props: {
+    scope: {
+      type: String,
+      default: SC.VIEWER,
+    },
+    enterId: {
+      type: String,
+      default: 'enter',
+    },
+    stayId: {
+      type: String,
+      default: 'stay',
+    },
+    leaveId: {
+      type: String,
+      default: 'leave',
+    },
+    enterData: {
+      type: Object,
+      default: {},
+    },
+    stayData: {
+      type: Object,
+      default: {},
+    },
+    leaveData: {
+      type: Object,
+      default: {},
+    },
+    sharedData: {
+      type: Object,
+      default: {},
+    },
+    // 关闭进入页面的打点
+    disableEnter: {
+      type: Boolean,
+      default: false,
+    },
+    // 关闭页面停留的打点
+    disableStay: {
+      type: Boolean,
+      default: false,
+    },
+    // 关闭页面离开的打点
+    disableLeave: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    isBinded() {
+      return this.$viewerTracking.isBinded(this.curPagePath)
+    },
+  },
+  watch: {
+    isBinded(v, oldv) {
+      if (v) {
+        // console.log('组件内：进入了 ' + this.curPagePath + ' 页面')
+        // 进入页面
+        if (! this.disableEnter && this.isMounted) {
+          // 进入页面打点
+          this.sendEnterEvent()
+        }
+        if (! this.disableStay && this.isMounted) {
+          // 开始心跳打点
+          this.pulse()
+        }
+      } else {
+        // console.log('组件内：离开了 ' + this.curPagePath + ' 页面')
+        // 离开页面
+        if (! this.disableLeave) {
+          // 离开页面打点
+          this.sendLeaveEvent()
+        }
+        if (! this.disableStay) {
+          // 停止心跳打点
+          this.kill()
+        }
+      }
+    }
+  },
+  beforeMount() {
+    // 获取当前页面路径
+    this.curPagePath = (getCurrentPages().slice(-1)[0] || {}).route
+  },
+  mounted() {
+    this.isMounted = true
+    // 第一次打点等待组件挂载完打点，因为父组件可能会使用
+    // v-if 挂载组件，这样组件就可能无法 watch 到页面
+    // onshow 的变化。
+    // 比如用户扫码跳转到某个页面，这时首页无需打点，将会用
+    // v-if 不挂载该组件，但是如果没有扫码，首页需要打点，
+    // v-if 由默认false 转为 true，而此时也错过了 onshow
+    // 的时机，就无法通过 onshow 进行页面的进入和心跳打点，
+    // 这时就用组件挂载进行页面的进入和心跳打点。
+    if (! this.disableEnter) {
+      // 进入页面打点
+      this.sendEnterEvent()
+    }
+    if (! this.disableStay) {
+      // 开始心跳打点
+      this.pulse()
+    }
+  },
+  beforeDestroy() {
+    // console.log('组件内：离开了 ' + this.curPagePath + ' 页面')
+    // 离开页面
+    if (! this.disableLeave) {
+      // 离开页面打点
+      this.sendLeaveEvent()
+    }
+    if (! this.disableStay) {
+      // 停止心跳打点
+      this.kill()
+    }
+  },
+  methods: {
+    ...mapActions(['sendEventTagByHardId']),
+    /**开始心跳打点 */
+    pulse() {
+      let intervalTime = 10000
+      let accTime = 0
+      this.pulseTimer = setInterval(() => {
+        accTime += 10
+        this.sendEventTagByHardId({
+          scope: SC.VIEWER,
+          id: this.stayId,
+          data: {
+            ...this.sharedData,
+            ...this.stayData,
+            stayTime: accTime + 's',
+          }
+        })
+      }, intervalTime)
+    },
+    /**停止心跳打点 */
+    kill() {
+      clearInterval(this.pulseTimer)
+    },
+    /**进入页面打点 */
+    sendEnterEvent() {
+      this.sendEventTagByHardId({
+        scope: SC.VIEWER,
+        id: this.enterId,
+        data: {
+          ...this.sharedData,
+          ...this.enterData,
+          enterTime: timeFormatter()
+        }
+      })
+    },
+    /**离开页面打点 */
+    sendLeaveEvent() {
+      this.sendEventTagByHardId({
+        scope: SC.VIEWER,
+        id: this.leaveId,
+        data: {
+          ...this.sharedData,
+          ...this.leaveData,
+          leaveTime: timeFormatter()
+        }
+      })
+    }
+  }
+}
+</script>
+```
+
+### 组件 viewer-tracking 内 isBinded 的实现
+
+```
+// @/src/libs/tracking/tracking-store.js
+import Vue from 'vue'
+
+// 页面是否进入或离开，是用于打浏览打点的标记
+// 如果 binded['_pages/index/index'] 为 true，则
+// 首页是进入状态，打点组件会检查这个属性，进行进入页面
+// 的浏览打点，反之为 false，则首页是离开状态，组件会
+// 进行离开页面的浏览打点。
+const viewerTracking = Vue.observable({
+  binded: {},
+  bind(path) {
+    viewerTracking.binded = {
+      ...viewerTracking.binded,
+      ['_' + path]: true,
+    }
+  },
+  unbind(path) {
+    viewerTracking.binded = {
+      ...viewerTracking.binded,
+      ['_' + path]: false,
+    }
+  },
+  isBinded(path) {
+    return !! viewerTracking.binded['_' + path]
+  },
+  specPageBinded(path) {
+    return viewerTracking.binded['_' + path]
+  },
+})
+
+export default viewerTracking
+```
+
+```
+// @/src/main.js
+import viewerTracking from '@/libs/tracking/tracking-store'
+
+Vue.prototype.$viewerTracking = viewerTracking
+
+Vue.mixin({
+  onShow() {
+    // 用于打进入浏览打点的标记
+    const path = (getCurrentPages().slice(-1)[0] || {}).route
+    // console.log('全局 mixin：展示 ' + path)
+    viewerTracking.bind(path)
+  },
+  onHide() {
+    // 用于打离开浏览打点的标记
+    const path = (getCurrentPages().slice(-1)[0] || {}).route
+    // console.log('全局 mixin：隐藏 ' + path)
+    viewerTracking.unbind(path)
+  },
+  onUnload() {
+    // 用于打离开浏览打点的标记
+    // 离开页面有两种情况，页面进入后台，或者点击左上角返回到上一页（导致当前页面卸载），onshow 和 onunload
+    const path = (getCurrentPages().slice(-1)[0] || {}).route
+    // console.log('全局 mixin：卸载 ' + path)
+    viewerTracking.unbind(path)
+  },
+})
+```

@@ -1,0 +1,93 @@
+# 阅读《网络是怎样连接的》记录
+
+阅读《网络是怎样连接的》，入门计算机网络，并进行记录。
+
+## 连接和断开
+
+- [为什么TCP4次挥手时等待为2MSL？ - 知乎用户的回答 - 知乎](https://www.zhihu.com/question/67013338/answer/1032098712)
+- [什么是2MSL](https://blog.csdn.net/xiaofei0859/article/details/6044694/)
+
+## keep-alive
+
+- [HTTP协议头部与Keep-Alive模式详解](https://www.pudn.com/news/628f8293bf399b7f351e3286.html)
+- [HTTP保持长连接的操作](https://zhuanlan.zhihu.com/p/388270712)
+- [HTTP长连接和短连接](https://www.cnblogs.com/0201zcr/p/4694945.html)
+
+## 缓存
+
+强制缓存：直接从客户端本地获取，不向服务端请求，即使断网也能获取；这种情况下，状态码 200，在浏览器开发者工具可以看到`Status Code: 200  (from memory cache)`或者`Status Code: 200  (from disk cache)`。
+
+协商缓存：客户端会向服务端请求，但不从服务端直接获取资源，而是先询问自己是否能使用缓存，“我的缓存过期了吗”，服务端会告诉客户端结果，如果没过期，客户端将直接使用缓存，如果过期了，服务端会把最新的资源送给客户端，这个过程叫协商；这种情况，状态码 304，`Status Code: 304`。
+
+和强制缓存相关的字段：Expires 和 Cache-Control；其中 Cache-Control 的值可以有很多组合，但是当值包含`max-age=t1`的时候，就会在 t1 时间内不向服务端请求，而直接取缓存，t1 时间内走的是强制缓存。
+
+和协商缓存相关的字段：ETag/If-None-Match 和 Last-Modified/If-Modified-Since。
+
+Expires：
+- HTTP1.0 字段，如果设置了 Cache-Control 的 max-age 字段，Expires 会被忽略；
+- 设置具体的时间值（首次请求时服务端返回）作为缓存的过期时间，例如“`expires: Tue, 20 Sep 2022 00:47:28 GMT`”；
+- 过期时间由服务端确定，而客户端时间并非一致（时区、用户主动调节时间），缓存无法预期，只要客户端时间以任何理由超过 expires，缓存将失效。
+
+关于用户主动调时，因为技术透明，用户介入主动受害（缓存失效）；关于时区，技术结果，用户被动受害（缓存失效）。
+
+Cache-Control：
+- HTTP1.1 字段，设置相对时间控制缓存过期时间；
+- public（任何地方缓存，客户端或者代理）；
+- private（只允许客户端缓存）；
+- no-cache（协商缓存，使用缓存前问服务端自己的缓存过期了没）；
+- no-store（禁用缓存，机密文件不想客户端缓存）
+- max-age=（单位是秒）, s-maxage=（优先级高于 max-age= 和 expires，仅适用共享缓存）；
+- max-stale[=]（表示客户端愿意接受已过期资源，但是不能超过给定时间）；
+- `cache-control: max-age=315360000`表示过期时间（新鲜度）一年，一年内内，可以绕过请求服务端，直接使用缓存；
+- `Cache-Control: no-cache`——使用缓存之前要请求服务端，验证缓存是否仍然有效，不能绕过服务端，另外`Cache-Control: max-age=0, must-revalidate`相当于 no-cache。
+
+> If a response includes both an Expires header and a max-age directive, the max-age directive overrides the Expires header, even if the Expires header is more restrictive --- [RFC2016](https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9.3)，同时有 max-age 和 expires，expires 将被覆盖
+
+Last-Modified / If-Modified-Since：
+- 第一次请求服务器返回 Last-Modefied 后浏览器保存为 If-Modified-Since；
+- 之后浏览器每次发出请求，若未命中强制缓存，则携带 IMS；
+- 服务器对比最后修改时间，如果修改时间一致，返回 304，否则返回最新资源和 200 状态码；
+- 弊端一，秒级精确度，如果客户端请求的时候，服务端在同一秒修改了文件很多次，客户端只拿到了其中一个版本并缓存了下来，结果可能让缓存不是最新的；
+- 弊端二，Last-Modified 的改变不代表资源内容的改变，例如使用服务端使用编辑器打开某资源，也可能导致 Last-Modified 更新，结果导致客户端缓存失效。
+
+Etag / If-None-Match：流程和 Last-Modifed/If-Modified-Since 一致；使用 Hash 判断资源是否被修改，因此不受秒级准确度限制，更精准。
+
+缓存改进方案：md5 / hash 缓存和 CDN 缓存。
+
+DNS Prefetch：打开后，浏览器提前将域名转为 IP 地址到浏览器 DNS 缓存中；`<meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="//www.imooc.com">`
+
+不能被缓存的请求：
+- HTTPS 请求；
+- POST 请求；
+- HTTP 响应头中不包含 Last-Modified/Etag，不包含 Cache-Control/Expires 的请求；
+- HTTP 响应头中包含 Cache-Control:no-store（pragma:no-cache 不确定） 等告诉浏览器不用缓存的请求。
+
+对经常更新的文件使用`max-age`的问题：
+
+- 请求时间不一致问题——如果资源之间时相互依赖的，而请求时并不一定同时请求，就会造成过期时间不一致，当其中某个文件进行了更新，就可能破坏原有的依赖，导致客户端出现错误；
+- 缓存丢失问题——如果丢失了某个经常被更新的文件的缓存，就会重新获取最新的该文件版本，这时可能破坏原有的依赖，和其它资源的过期时间不一样了，同样导致客户端出现错误；
+- 如果某个资源不依赖其它资源，尽管经常更新，也可以使用`max-age`来减轻服务端的负担。
+
+问题：通过哪个字段反应第一次设置 max-age 的时间？
+
+相关链接：
+
+- [Static File Caching](https://create-react-app.dev/docs/production-build/#static-file-caching)——CRA 上介绍的 cache-control 缓存，当开启文件名哈希，为 index.html 不设置缓存，为静态资源设置缓存，例如 Cache-Control: max-age=31536000；
+- [js 浏览器缓存机制](https://blog.csdn.net/i13738612458/article/details/80383390)；
+- [使用 HTTP 缓存避免不必要的网络请求](https://web.dev/http-cache/#flowchart)——有一张使用 cache-control 的流程图；
+- “[What's the difference between Cache-Control: max-age=0 and no-cache?](https://stackoverflow.com/questions/1046966/whats-the-difference-between-cache-control-max-age-0-and-no-cache)”——`max-age=0 和 no-cache`的区别;
+- [深入理解浏览器的缓存机制](https://www.jianshu.com/p/54cc04190252)；
+- [Chrome memory cache vs disk cache](https://stackoverflow.com/questions/44596937/chrome-memory-cache-vs-disk-cache)——关于浏览器缓存的“memory cache”和“disk cache”；
+- [MDN-Pragma](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Pragma；https://stackoverflow.com/questions/7376515/what-are-the-valid-values-for-http-pragma)；
+- [Caching best practices & max-age gotchas](https://jakearchibald.com/2016/caching-best-practices/)—— max-age 最佳实践。
+
+## 引用
+
+- [终于有人把正向代理和反向代理解释的明明白白了！](https://cloud.tencent.com/developer/article/1418457)
+- [DNS 查询原理详解](https://www.ruanyifeng.com/blog/2022/08/dns-query.html)
+- [HTTP Cats](https://http.cat/)：用猫表示状态码。
+- [HTTP 状态码速查大全](https://http.devtool.tech/)
+- [MDN-HTTP 文档](https://developer.mozilla.org/zh-CN/docs/Web/HTTP)
+
+
+- [NGINX Max URL Length - 414 URI Too Large](https://www.youtube.com/watch?v=HT0xVY7i_DU)：NGINX 默认 8k url 长度。
