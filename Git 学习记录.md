@@ -90,6 +90,19 @@ git push origin :refs/branch/feature-album # 第二种方法，这种方法适�
 git checkout -b <local-branch> origin/<remote-branch> # 拉取远程指定分支并检出
 ```
 
+重命名分支（本地）：
+
+```
+# 重命名当前分支
+git branch -m <new_name> # -m 是 --move 短格式
+
+# 重命名指定分支
+git branch -m <old_name> <new_name>
+
+# 在大小写无感的文件系统中重命名分支
+git branch -M <New_Name> # 如果不是用 -M，会报错 fatal: 一个分支名 'new_name' 已经存在
+```
+
 ## 克隆
 
 ```bash
@@ -463,7 +476,7 @@ git rebase feature-album # 分支 feature-album 变基到当前分支
 图形形式的提交记录，包括短 id，提交信息，相对时间，作者名称：
 
 ```bash
-git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit # 这一段命令很长，为了方便，下面介绍了用别名代替这条命令的方法
+git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit # 这一段命令很长，为了方便，后面介绍了用别名代替这条命令的方法
 ```
 
 <img src="git-log-graph.png" style="max-width:100%;" title="git log --graph"/>
@@ -489,6 +502,12 @@ git reflog
 
 ```
 git log -p <file> # -p 查看具体的 diff
+```
+
+展示所有的提交记录，例如在某个分支需要查看其它分支的提交信息时，可以使用这条命令：
+
+```
+git log --oneline --all # 参数 --all 表示展示所有提交记录
 ```
 
 `git log`其它配置的命令：
@@ -526,7 +545,7 @@ git log --pretty=format:'%h %ad %an %s' --date=local # hash、日期、作者、
 - %cn: commit name
 - %s: log message
 
-上面提到的图形形式的提交记录命令很长，如果常用，为它设置别名会更方便：
+前面提到的图形形式的提交记录命令很长，如果常用，为它设置别名会更方便：
 
 ```
 git config --global alias.gg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
@@ -538,7 +557,7 @@ git config --global alias.gg "log --color --graph --pretty=format:'%Cred%h%Crese
 
 - [Pretty Git branch graphs](https://stackoverflow.com/questions/1057564/pretty-git-branch-graphs)。
 
-## 忽略文件，`.gitignore`
+## 忽略文件
 
 有两种忽略文件或文件夹的方法，一，编辑项目内的`.git/info/exclude`文件，在文件里添加需要忽略的文件或文件夹，二，在项目里添加`.gitignore`文件，在文件里添加需要忽略的文件或文件夹。
 
@@ -556,6 +575,19 @@ git config --global alias.gg "log --color --graph --pretty=format:'%Cred%h%Crese
 
 - [Git常用命令整理八(忽略文件)](http://niliu.me/articles/2841.html)；
 - “[When would you use .git/info/exclude instead of .gitignore to exclude files?](https://stackoverflow.com/questions/22906851/when-would-you-use-git-info-exclude-instead-of-gitignore-to-exclude-files)”。
+
+## 比较差异
+
+```bash
+# 对比暂存区差异
+git diff --staged
+
+# 对比工作区差异
+git diff
+
+# 和上一次提交对比
+git diff HEAD~
+```
 
 ## diff 工具
 
@@ -580,18 +612,6 @@ git config --global alias.gg "log --color --graph --pretty=format:'%Cred%h%Crese
 ```
 
 这样设置后，执行`git difftool`打开 diff 工具进行文件比较。
-
-对比暂存区差异：
-
-```bash
-git diff --staged
-```
-
-对比工作区差异：
-
-```bash
-git diff
-```
 
 ## 补丁
 
@@ -912,6 +932,29 @@ vim .git/config # 删除 config 文件里的 submodule 配置，形如下面这�
 
 ## 二分查找
 
+使用`git bisect`命令，用二分法找到第一条出错的提交记录。
+
+```bash
+git bisect start <节点> <祖先节点>
+# 例如，git bisect start HEAD 4d83cfc
+
+# 如果代码没有错误，就进行标记 good，git 接下来会向后代继续查找
+git bisect good
+
+# 如果代码出现了错误，就进行标记 bad，git 接下来会向祖先继续查找
+git bisect bad
+
+# 退出查找
+git bisect reset
+```
+
+在最后一步标记后，git 会提示我们“<commit_id> is the first bad commit”。
+
+相关链接：
+- [Bisectercise](https://github.com/bradleyboy/bisectercise)——Github 仓库，克隆下来用于练习“git bisect”；
+- [git bisect 命令教程](http://www.ruanyifeng.com/blog/2018/12/git-bisect.html)；
+- [git-bisect](https://git-scm.com/docs/git-bisect)——社区文档。
+
 ## GUI
 
 - [magit](https://github.com/magit/magit)：Emacs git 客户端
@@ -941,6 +984,8 @@ git commit -m "rename 'song'"
 
 ```bash
 git show <commit>
+git show --raw <commit> # 查看提交文件列表
+git show <commit> <file> # 查看提交记录的某文件 diff
 git show HEAD^ # 上次提交
 git show HEAD@{n} # 倒数第 n 次提交
 git show <commit>:<file> # 查看一次提交的一个文件的变化
@@ -1017,6 +1062,8 @@ git remote rename <old_name> <name> # 修改仓库名
 - [Oh Shit, Git!?!](https://ohshitgit.com/zh)
 - [Git常用命令整理](http://niliu.me/articles/513.html)
 - [Awesome Git](https://github.com/dictcp/awesome-git)
+- [图解Git](http://marklodato.github.io/visual-git-guide/index-zh-cn.html#diff)
+- [git-tips](https://github.com/521xueweihan/git-tips)
 
 其它链接：
 

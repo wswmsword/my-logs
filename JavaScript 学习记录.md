@@ -188,8 +188,10 @@ Function.prototype.call1 = function(t)
 function Person() {}
 Person.prototype.dance = function() {};
 
-function Ninja() {}
-Ninja.prototype = new Person();
+function Ninja() {
+	Person.call(this);
+}
+Ninja.prototype = Object.create(Person.prototype);
 
 Object.defineProperty(Ninja.prototype, "constructor", {
   enumberable: false,
@@ -201,11 +203,19 @@ var ninja = new Ninja();
 // ninja.constructor === Ninja // true。
 ```
 
+模拟继承的几个关键：
+- `Person.call(this);`，用于复制父类的属性；
+- `Ninja.prototype = Object.create(Person.prototype);`，把父类作为子类的原型，用于获取父类的方法；
+- `Ninja.prototype.constructor = Person;`（或者使用 Object.defineProperty 另构造器不可枚举），用于维持类的正确性，使子类的构造函数是自己而不是父类。
+
 相关链接：
 
 - [扎实前端系列：JavaScript实现继承](https://www.jianshu.com/p/af39457e7722)
 - [Javascript实现继承的6种方式](https://blog.csdn.net/Tokki_/article/details/91357384)
 - [用 Object.create() 实现类式继承](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/create#%E7%94%A8_object.create_%E5%AE%9E%E7%8E%B0%E7%B1%BB%E5%BC%8F%E7%BB%A7%E6%89%BF)
+- [JavaScript 中对象的 constructor 属性的作用是什么？](https://www.zhihu.com/question/19951896/answer/13457869)——模拟继承过程中会改变子类的构造器，为什么修改？
+- [Object.prototype.constructor-MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/constructor)
+- [JavaScript常用八种继承方案](https://juejin.cn/post/6844903696111763470#heading-6)
 
 instanceof 的警告：构造函数原型的改变会导致 instanceof 返回否。
 

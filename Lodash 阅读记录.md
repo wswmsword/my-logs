@@ -262,9 +262,27 @@ while (++index < n) { // MAX_ARRAY_LENGTH + 1 < 1 🚫 不会执行
 }
 ```
 
-### debounce
+### [debounce](https://github.com/lodash/lodash/blob/master/debounce.js)
 
+为了解释方便，做一些定义：
+- f，被调用的函数，希望不被频繁调用的函数；
+- debounce，防抖函数；
+- df，防抖化函数，也就是执行 debounce(f, 600) 的结果。
 
+通常防抖的实现：
+- df 每一次执行，清除上一次的定时器，生成新的定时器，这样可以一直向后延迟，让 f 在每两次时间间隔小于 600ms 的一系列调用中只执行 1 次；
+- 假如用户在 600ms 内调用了 100 次 df，就进行了 100 次删除并创建定时器的操作，存在性能代价。
+
+Lodash 的防抖的实现不同，Lodash 不清除定时器，假设用户已经频繁调用 df 了 3000ms，Lodash 最多只创建 5 次定时器，所以防抖的性能稳定。
+
+<img src="lodash-debounce.png" style="max-width:100%;" title="lodash debounce"/>
+
+这张图的三角形表示调用 df，正方形表示预期执行 f，最右边的正方形真正执行了 f。
+
+利用`requestAnimationFrame`代替`setTimeout`，在没有指定`wait`延迟时间的时候优化性能。
+
+相关链接：
+- [聊聊lodash的debounce实现](https://github.com/ColaDaddyz/Blog/issues/8)
 
 ### memoize
 
