@@ -454,6 +454,9 @@ git rebase rebased-album-features
 git rebase feature-album # 分支 feature-album 变基到当前分支
 ```
 
+相关链接：
+- [“git 小白求助，怎样优雅的回滚过去某次错误的 merge，并保留 merge 之后 commit 的改动”](https://www.v2ex.com/t/883095)
+
 ## 文件的四种状态
 
 `Untracked`、`Staged`、`Unmodified`、`Modified`
@@ -1036,6 +1039,9 @@ git hash-data <file-name> # 查看单文件的 SHA1 值
 `git rm --cached <file>`，撤销跟踪，保留工作区的文件内容。`git rm -f <file>`，强制删除文件。
 
 不是所有的文件都需要 git 跟踪，例如项目编译之后的产包。如果产包因为误操作导致被跟踪了，就使用`git rm`命令来取消跟踪，并把产包添加到`.gitignore`来忽略跟踪。已跟踪的文件再添加到`.gitignore`中不会生效。
+
+相关链接：
+- [git忽略已经被提交的文件](https://segmentfault.com/q/1010000000430426/a-1020000017179994)——segmentfault 的答案，除了使用`git rm --cached`还提供了其它方法取消跟踪已跟踪的文件。
 
 ### git remote
 

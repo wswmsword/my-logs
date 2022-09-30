@@ -6,57 +6,6 @@
 
 > [围绕原始数据类型创建一个显式包装器对象从 ECMAScript 6 开始不再被支持。 然而，现有的原始包装器对象，如 new Boolean、new String以及new Number，因为遗留原因仍可被创建。](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Symbol#description)
 
-## [iLoveRegex](https://ihateregex.io)
-
-*URL query 参数获取：*
-
-```
-function query(name)
-{
-	const search = location.search.substr(1) // 跳过头部符号“?”
-	const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i')
-	const res = search.match(reg)
-	if (res === null) { return null }
-	return res[2] // res 是类数组，有可枚举属性 groups, index, input 以及数字下标，某个数字下标 i 的值是第 i 对括号匹配的字符串，数字下标 0 正则匹配的字符串
-}
-```
-
-*删除头尾空格：*
-
-```javascript
-function zTrim(z)
-{ return z.replace(/^\s+|\s+$/gm, '') } // 多行全局匹配 gm
-```
-
-*补全非自闭合标签：*
-
-```javascript
-const tags = /^(area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)$/i; // 这些是自闭合标签
-function convert(html)
-{
-  return html.replace(/(<(\w+)[^>]*?)\/>/g,
-	  (all, front, tag) => (tags.test(tag) ? all : front + "></" + tag + ">")
-  ); // 这里的“*?”，表示遇到“>”匹配失败，遇到其它则忽略
-}
-```
-
-*中线转驼峰：*
-
-```javascript
-function style(element, name, value)
-{
-  name = name.replace(/-([a-z])/ig,
-	  (all, letter) => (letter.toUpperCase())
-  );
-  if (typeof value !== 'undefined') {
-    element.style[name] = value;
-  }
-  return element.style[name];
-}
-```
-
-    
-
 ## 闭包 closure 和作用域
 
 ### 闭包
@@ -1503,7 +1452,10 @@ Object.prototype.toString.call(book) // "[object Boolean]"
 
 《JavaScript设计模式与开发实践》：https://www.doc88.com/p-9955326115091.html。
 
-URL 获取 query：URLSearchParams。
+URL 获取 query：
+- URLSearchParams；
+- [a 标签](https://stackoverflow.com/a/12470263)；
+- 正则。
 
 前端如何给 JavaScript 加米：https://www.zhihu.com/question/47047191/answer/121013968。
 
