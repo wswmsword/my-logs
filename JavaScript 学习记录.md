@@ -278,7 +278,7 @@ let user = {
 - [属性的 getter 和 setter](https://zh.javascript.info/property-accessors)—— JAVASCRIPT.INFO 上的教程；
 - [getter](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Functions/get)：MDN 文档。
 
-### 一些获取对象属性的方法
+### 一些关于对象或关于获取对象属性的方法
 
 `Object.getOwnPropertyNames`：获取非原型链上的可枚举和不可枚举的属性。
 
@@ -339,16 +339,43 @@ Object.assign({
 
 相关链接：
 
-- [\[译\] Object.assign 和 Object Spread 之争, 用谁？](https://cloud.tencent.com/developer/article/1730947)
-- [Object spread vs. Object.assign](https://stackoverflow.com/a/48582976)
+- [\[译\] Object.assign 和 Object Spread 之争, 用谁？](https://cloud.tencent.com/developer/article/1730947)；
+- [Object spread vs. Object.assign](https://stackoverflow.com/a/48582976)；
+- [MDN-Object.defineProperty()](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty#%E6%8F%8F%E8%BF%B0)——关于数据描述符和存取描述符。
+
+### Object.defineProperty
+
+
 
 ### 相关链接
 
-- [\[译\] JavaScript 引擎基础：Shapes 和 Inline Caches](https://hijiangtao.github.io/2018/06/17/Shapes-ICs/)：引擎是怎么处理原型的，解释了“为什么不要随便改原型”。
+- [\[译\] JavaScript 引擎基础：Shapes 和 Inline Caches](https://hijiangtao.github.io/2018/06/17/Shapes-ICs/)：引擎是怎么处理原型的，解释了“为什么不要随便改原型”；
 - [\[译\] JavaScript 引擎基础：原型优化](https://hijiangtao.github.io/2018/08/21/Prototypes/)：引擎是怎么处理原型的，解释了“为什么不要随便改原型”；
 - [typeof-Real-world usage](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/typeof#real-world_usage)：typeof 的真实使用。
 
 ## Symbol
+
+### Symbol.toStringTag
+
+有时我们希望判断数据类型，会用到`Object.prototype.toString.call(data)`，执行这句会得到类似`[object String]`的结果，这是因为`toString`读取了实例的`Symbol.toStringTag`属性。
+
+```javascript
+var a = new Map();
+Object.prototype.toString.call(a); // "[object Map]"
+a[Symbol.toStringTag]; // "Map"
+```
+
+如果没有主动设置 toStringTag，就是默认的`[object Object]`，如果要自定义，就要设置`toStringTag`。
+
+```javascript
+var f = function() {};
+Object.prototype.toString.call(new f()); // "[object Object]"
+Object.defineProperty(f.prototype, Symbol.toStringTag, { value: 'F' }); // Symbol.toStringTag 的描述符按照标准都要设置成 false，通过 Object.getOwnPropertyDescriptor(f.prototype, Symbol.toStringTag) 查看描述符属性状态
+Object.prototype.toString.call(new f()); // "[object F]"
+```
+
+相关链接：
+- [MDN-Symbol.toStringTag](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toStringTag)
 
 ## Proxy
 
@@ -828,6 +855,12 @@ ninja 对象的原型链上不存在 Ninja 函数的原型（一个新的空对�
 
 > [接近完美地判断JS数据类型，可行吗](https://segmentfault.com/a/1190000022221464)
 
+## 事件循环
+
+相关链接：
+- [浏览器多进程和事件循环详解](https://www.jianshu.com/p/76a3a4f83d4f)；
+- [并发模型与事件循环](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/EventLoop)——MDN 的事件循环教程。
+
 ## 浏览器模型
 
 ### Web Worker
@@ -915,6 +948,19 @@ if 语句和逻辑运算里决定结果的 truely 和 falsely：
 !!undefined === false
 !!false === false
 ```
+
+## 可访问性
+
+给 img 标签添加 alt 属性。
+
+> 将 user-scalable 设置为 no 会阻止一切意义上的缩放，视力不好的人可能会因此无法阅读和理解页面内容。——[MDN](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/meta/name#%E5%85%B6%E4%BB%96%E8%A7%84%E8%8C%83%E4%B8%AD%E5%AE%9A%E4%B9%89%E7%9A%84%E6%A0%87%E5%87%86%E5%85%83%E6%95%B0%E6%8D%AE%E5%90%8D%E7%A7%B0)
+
+相关链接：
+- [\<img\> 无障碍考量](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/img#%E6%97%A0%E9%9A%9C%E7%A2%8D%E8%80%83%E9%87%8F)；
+- [响应式图片](https://developer.mozilla.org/zh-CN/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images)——MDN 的教程；
+- [响应式图片中srcset遇到的问题](https://www.whidy.net/responsive-image-dev-tips)——对 MDN 教程里给出的示例无法运行的思考。
+
+## 安全性
 
 ## 性能
 
@@ -1265,17 +1311,9 @@ ES6 模块和 CommonJS 和 AMD 模块：ES6 模块不是“运行时加载”，
 > [AMD, CMD, CommonJS和UMD](https://segmentfault.com/a/1190000004873947)
 > 
 
-## HTML 元标签
+## viewport
 
-### viewport
-
-[重新认识Pixel、DPI / PPI 以及像素密度](https://blog.infolink.com.tw/2021/rediscover-pixel-dpi-ppi-and-pixel-density/)：DPI dots per inch；PPI pixels per inch；DPR device pixel ratio/dots per pixel。
-
-- 显示器的成像密度是 72dpi，现有图像宽度尺寸是 512px，求在完整展示图像时所需要的显示器宽度？答：`512px / (72px / inch) = 7.111inch = 18.062cm`。
-- 为什么出现了 CSS Pixel？答：当通过实际像素来分辨屏幕类型的时候，高分辨率的手机会被识别为桌面屏幕。
-- Web 中给不同解析度的图像？答：`<img> 的 srcset 和 sizes 屬性`。
-
-[HTML5中meta viewport 的用法](https://blog.csdn.net/Liuqz2009/article/details/89500080)：viewport ラベル<small style="color: orange">label</small>の使い方<small style="color: salmon">つかいかた</small>，下面的一点记录很混乱，没有说明原理和用法，好在它们都来自这篇博文，找时间重新整理。
+[移动前端开发之viewport的深入理解](https://www.cnblogs.com/2050/p/3877280.html)：viewport ラベル<small style="color: orange">label</small>の使い方<small style="color: salmon">つかいかた</small>，下面的一点记录很混乱，没有说明原理和用法，好在它们都来自这篇博文，找时间重新整理。
 
 devicePixelRatio = 物理像素 / 独立像素。我的 MBP 2015 的 window.devicePixelRatio = 2，即代表 1 个 ps 对应 2 个物理像素。
 
@@ -1287,9 +1325,25 @@ devicePixelRatio = 物理像素 / 独立像素。我的 MBP 2015 的 window.devi
 
 content 里的 width 和 initial-scale：width=device-width 用来修改 LV 成理想宽度，但是 iPhone 和 iPad 会有问题（转不过来），因此用 initial-scale=1 来相对 VV 缩放一倍（不变），达到 width 属性相同效果，但是 IE 有问题（不转），最后两者结合解决问题。
 
-[WEB IMAGE 加载优化方案](https://sylvenas.github.io/blog/2018/03/06/web-image-%E4%BC%98%E5%8C%96.html)：网易云 FP 工程师的文章，解释了 CSS 密度。
+DPI、PPI 和 DPR：
+- DPI dots per inch；
+- PPI pixels per inch；
+- DPR device pixel ratio/dots per pixel。
 
-#### 1px 像素问题
+显示器的成像密度是 72dpi，现有图像宽度尺寸是 512px，求在完整展示图像时所需要的显示器宽度？
+- 答：`512px / (72px / inch) = 7.111inch = 18.062cm`。
+
+为什么出现了 CSS Pixel？
+- 答：当通过实际像素来分辨屏幕类型的时候，高分辨率的手机会被识别为桌面屏幕。
+
+Web 中给不同解析度的图像？
+- 答：`<img> 的 srcset 和 sizes 屬性`。
+
+相关链接：
+- [重新認識 Pixel、DPI / PPI 以及像素密度](https://blog.infolink.com.tw/2021/rediscover-pixel-dpi-ppi-and-pixel-density/)；
+- [WEB IMAGE 加载优化方案](https://sylvenas.github.io/blog/2018/03/06/web-image-%E4%BC%98%E5%8C%96.html)——网易云 FP 工程师的文章，解释了 CSS 密度。
+
+### 1px 像素问题
 
 解决方法 1：
 
@@ -1312,9 +1366,8 @@ content 里的 width 和 initial-scale：width=device-width 用来修改 LV 成�
 })
 ```
 
-### Reference
-
-[Should I "close" `<img>` and other HTML tags?](https://dev.to/alex_arriaga/should-i-close-img-and-other-html-tags-3727)
+相关链接：
+- [Should I "close" `<img>` and other HTML tags?](https://dev.to/alex_arriaga/should-i-close-img-and-other-html-tags-3727)
 
 ```
 HTML5: the ending slash '/' is optional.
@@ -1430,8 +1483,6 @@ ESLint 工作原理探讨 https://www.jianshu.com/p/526db7eeeecc
 
 let vs. const：使用 const 更容易推测数据流动，使用 let 时思考重新赋值的原因。
 
-浏览器多进程和事件循环详解：https://www.jianshu.com/p/76a3a4f83d4f。
-
 数组洗牌：下面的方法会发生概率倾斜，更好的是使用[`Fisher-Yates shuffle`算法](https://zh.javascript.info/task/shuffle)。[三种洗牌算法shuffle](https://blog.csdn.net/qq_26399665/article/details/79831490?utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-1.control&dist_request_id=&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-1.control)。
 
 ```
@@ -1490,13 +1541,11 @@ Git：git log --graph --pretty=oneline --abbrev-commit 美化日志；git branch
 ECMAScript 标准定义的 8 种数据类型：`Boolean, Null, Undefined, Number, BigInt, String, Symbol`, `Object`。
 
 待读书籍：
-
 - Web性能实战，https://www.ituring.com.cn/book/2011；
 - Learning JavaScript Design Patterns，https://addyosmani.com/resources/essentialjsdesignpatterns/book；
 - 函数式编程指南，https://legacy.gitbook.com/book/llh911001/mostly-adequate-guide-chinese。
 
-## 资料
-
+资料：
 - [ECMAScript 6 入门](https://es6.ruanyifeng.com/?search=getter&x=0&y=0)
 - [现代 JavaScript 教程](https://zh.javascript.info/)
 - [微服务是什么？](https://www.ruanyifeng.com/blog/2022/04/microservice.html)

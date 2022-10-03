@@ -339,7 +339,9 @@ git checkout testing-merge-file features/album/audio-formats # 当前分支的�
 - [3.2 Git 分支 - 分支的新建与合并](https://git-scm.com/book/zh/v2/Git-%E5%88%86%E6%94%AF-%E5%88%86%E6%94%AF%E7%9A%84%E6%96%B0%E5%BB%BA%E4%B8%8E%E5%90%88%E5%B9%B6)：社区文档；
 - [Git Merge Fast-Forward vs Git Rebase](https://stackoverflow.com/a/70627815)：StackOverflow 上关于`fast-forward`和`rebase`区别的答案。
 
-## 变基
+## 变基 rebase
+
+> 首先要提一下 rebase 的意思，我擅自的直譯是「重新 (re-) 定義某個 branch 的參考基準 (base)」。把這個意思先記起來，比較容易理解 rebase 的運作原理。就好比移花接木那樣（稼接），把某個樹枝接到別的樹枝。——[Git-rebase 小筆記](https://blog.yorkxin.org/posts/git-rebase.html)
 
 利用变基合并几条提交记录：
 
@@ -455,7 +457,8 @@ git rebase feature-album # 分支 feature-album 变基到当前分支
 ```
 
 相关链接：
-- [“git 小白求助，怎样优雅的回滚过去某次错误的 merge，并保留 merge 之后 commit 的改动”](https://www.v2ex.com/t/883095)
+- [“git 小白求助，怎样优雅的回滚过去某次错误的 merge，并保留 merge 之后 commit 的改动”](https://www.v2ex.com/t/883095)；
+- [Git-rebase 小筆記](https://blog.yorkxin.org/posts/git-rebase.html)。
 
 ## 文件的四种状态
 
@@ -479,7 +482,9 @@ git rebase feature-album # 分支 feature-album 变基到当前分支
 图形形式的提交记录，包括短 id，提交信息，相对时间，作者名称：
 
 ```bash
-git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit # 这一段命令很长，为了方便，后面介绍了用别名代替这条命令的方法
+git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+# 这一段命令很长，为了方便，后面介绍了用别名代替这条命令的方法
+# --abbrev-commit 的意思是，展示缩写的 commit_id，abbreviation
 ```
 
 <img src="git-log-graph.png" style="max-width:100%;" title="git log --graph"/>
@@ -501,16 +506,18 @@ git log --all --oneline --grep="microsoft" # 查询包含“microsoft”的提�
 git reflog
 ```
 
-查看某一个文件的提交记录：
-
-```
+```bash
+# 查看某一个文件的提交记录
 git log -p <file> # -p 查看具体的 diff
-```
 
-展示所有的提交记录，例如在某个分支需要查看其它分支的提交信息时，可以使用这条命令：
-
-```
+# 展示所有的提交记录，例如在某个分支需要查看最新的提交信息时，可以使用这条命令
 git log --oneline --all # 参数 --all 表示展示所有提交记录
+
+# 查看指定分支的提交记录
+git log --oneline <branch_name> # 这条命令会展示包括合并分支的所有细节提交记录，可以用选项 --first-parent 来只展示合并节点，方便阅读
+
+# 查看指定分支的提交记录（合并分支的提交记录只选择展示最后的合并节点）
+git log --oneline --first-parent <branch_name>
 ```
 
 `git log`其它配置的命令：
@@ -730,7 +737,7 @@ git stash apply --index # ?
 
 旧版本的`git stash save`从 Git2.16.0 起被弃用，点击[查看](https://github.com/git/git/blob/2512f15446149235156528dafbe75930c712b29e/Documentation/RelNotes/2.16.0.txt#L34)。
 
-相关链接：[What's the difference between git stash save and git stash push?](https://stackoverflow.com/a/71040797)。
+相关链接：“[What's the difference between git stash save and git stash push?](https://stackoverflow.com/a/71040797)”。
 
 ## 遴选
 
