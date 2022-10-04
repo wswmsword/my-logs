@@ -1,7 +1,6 @@
 # JavaScript 学习记录
 
 
-
 ## 遗留问题
 
 > [围绕原始数据类型创建一个显式包装器对象从 ECMAScript 6 开始不再被支持。 然而，现有的原始包装器对象，如 new Boolean、new String以及new Number，因为遗留原因仍可被创建。](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Symbol#description)
@@ -958,7 +957,8 @@ if 语句和逻辑运算里决定结果的 truely 和 falsely：
 相关链接：
 - [\<img\> 无障碍考量](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/img#%E6%97%A0%E9%9A%9C%E7%A2%8D%E8%80%83%E9%87%8F)；
 - [响应式图片](https://developer.mozilla.org/zh-CN/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images)——MDN 的教程；
-- [响应式图片中srcset遇到的问题](https://www.whidy.net/responsive-image-dev-tips)——对 MDN 教程里给出的示例无法运行的思考。
+- [响应式图片中srcset遇到的问题](https://www.whidy.net/responsive-image-dev-tips)——对 MDN 教程里给出的示例无法运行的思考；
+- [响应式图像教程](https://www.ruanyifeng.com/blog/2019/06/responsive-images.html)：阮一峰的响应式教程。
 
 ## 安全性
 
