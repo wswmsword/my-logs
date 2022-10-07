@@ -918,9 +918,9 @@ function flat(arr)
 
 这里的关键是 apply 和 concat 方法。前者的一个入参是数组，这个数组的每个元素将作为执行函数的每个入参；后者将接收的入参生成数组变成数组里的一个个元素。这两者结合，会逐层消去数组方括号。
 
-## ~~小特性~~
+## 相等判断
 
-类型转换的发生场景：字符串拼接；`==`；if 语句和逻辑运算
+如果要区分`-0`和`+0`，使用`-0 === +0`会返回 true，因此不能区分，可以利用 Infinity 判断，也就是`1/-0 === 1/+0`，这样将返回 false。
 
 `==` 的一些执行结果：
 
@@ -947,6 +947,13 @@ if 语句和逻辑运算里决定结果的 truely 和 falsely：
 !!undefined === false
 !!false === false
 ```
+
+类型转换的发生场景：字符串拼接；`==`；if 语句和逻辑运算
+
+相关链接：
+- [Object.is()](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/is)
+- [相等（==）](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Equality)
+- [严格相等（===）](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Strict_equality)
 
 ## 可访问性
 
