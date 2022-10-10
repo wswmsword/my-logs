@@ -858,7 +858,8 @@ ninja 对象的原型链上不存在 Ninja 函数的原型（一个新的空对�
 
 相关链接：
 - [浏览器多进程和事件循环详解](https://www.jianshu.com/p/76a3a4f83d4f)；
-- [并发模型与事件循环](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/EventLoop)——MDN 的事件循环教程。
+- [并发模型与事件循环](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/EventLoop)——MDN 的事件循环教程；
+- [JavaScript 运行机制详解：再谈Event Loop](https://www.ruanyifeng.com/blog/2014/10/event-loop.html)——阮一峰的事件循环教程。
 
 ## 浏览器模型
 
@@ -968,6 +969,69 @@ if 语句和逻辑运算里决定结果的 truely 和 falsely：
 - [响应式图像教程](https://www.ruanyifeng.com/blog/2019/06/responsive-images.html)：阮一峰的响应式教程。
 
 ## 安全性
+
+同源策略：ajax 请求时，浏览器当前网页和 server 必须同源（协议、域名、端口三者一致），但是图片（统计打点，第三方统计服务）、样式（CDN）和脚本（CDN, JSONP）的加载都无视同源。
+
+> http://www.ruanyifeng.com/blog/2016/04/same-origin-policy.html
+
+避免同源，跨域的方法：JSONP；CORS；WebSocket。
+
+JSONP：因为服务端可以返回任意数据，script 标签可以实现跨域，因此只要服务端**愿意**返回数据（合法 js 格式），就实现了获取跨域数据。
+
+关于 CORS：
+- http://www.ruanyifeng.com/blog/2016/04/cors.html；
+- 有一些公共接口，通常用来测试 ajax 请求在应用中正常运作的状态，比如 https://dog.ceo/api/breeds/image/random，自己的应用中请求它将开启 cors，请求头中可以看见 origin 字段，响应头中可以看见 access-control-allow-origin 字段；
+- cors 有简单请求和非简单请求，请求方法是`HEAD, GET, POST`之一，HTTP 头信息不超出`Accept, Accept-Language, Content-Language, Last-Event-ID, Content-Type`这些字段，满足这两个条件就是简单请求，其它是非简单请求；
+- cors 中预检（preflight）请求的作用，preflight 出现在非简单请求中，客户端在正式发出请求前“先询问服务器，当前网页所在的域名是否在服务器的许可名单之中，以及可以使用哪些HTTP动词和头信息字段”，如果得到否定回复，触发的错误将被 XMLHttpRequest 的 onerror 回调函数捕捉；
+- 実践<small style="color: salmon">じっせん</small> CORS：https://www.cnblogs.com/MrSaver/p/11202319.html。
+
+关于 XSS：
+- Cross Site Scripting，跨站脚本攻击；
+- 反射型 XSS，由用户触发，危险代码只作用当前用户，由服务端渲染网页；
+- 存储型 XSS，由用户触发，危险代码被存储到服务器中，在其它用户请求网页的时候将渲染到危险代码，存储型 XSS 波及所有访问用户；
+- 基于 DOM 的 XSS，由用户触发，危险代码只作用当前用户，由前端渲染网页；
+- 嵌入 script 脚本，收割 cookie；
+- XSS 攻击的处理 https://blog.alswl.com/2017/05/xss/；
+- XSS 预防工具 https://github.com/leizongmin/js-xss/blob/master/README.zh.md。
+
+关于 XSS 的防范：
+- CSP 防御，为 http 响应头配置 Content-Security-Policy；
+- 对用户输入的字符串进行白名单校验；
+- 提防如`href`、`src`属性的值，进行白名单校验，因为它们会执行字符串；
+- 注意一些 api，例如`innerHTML`、`outerHTML`、`document.write`、`location`、`onclick`、`onerror`、`onload`、`onmouseover`；
+- React 中，避免把用户提供的字符串作为 jsx 属性；
+- 如果 cookie 设计隐私，设置 http-only
+
+```javascript
+const userProvidePropsString = `{"dangerouslySetInnerHTML":{"__html":"<img onerror='alert(\\"xss\\");' src='empty.png' />"}}`;
+const userProvideProps = JSON.parse(userProvidePropsString);
+export default function XSS() {
+	return <>
+		<div {...userProvideProps} />
+	</>
+}
+```
+
+关于 CSRF：
+- Cross Site Request Forgery，跨站请求伪造；
+- 利用 token，验证码，进行防护。
+
+关于 clickjacking：利用 iframe 点击劫持。
+
+阮一峰-图解 SSL/TLS 协议：http://www.ruanyifeng.com/blog/2014/09/illustration-ssl.html。
+
+相关链接：
+- [\[ Security \] WEB安全(一)之图解XSS注入](https://cloud.tencent.com/developer/article/1812929)；
+- [\[ Security \] WEB安全(二)之图解 CSRF 注入](https://cloud.tencent.com/developer/article/1814643)；
+- [浅谈 React 中的 XSS 攻击](https://juejin.cn/post/6874743455776505870)；
+- [XSS game](https://xss-game.appspot.com/)——XSS 游戏；
+- [XSS攻击，这次一定会！](https://juejin.cn/post/7071893245575299109)；
+- [前端安全系列（一）：如何防止XSS攻击？](https://www.cnblogs.com/meituantech/p/9718677.html)——美团技术文章；
+- [前端安全系列之二：如何防止CSRF攻击？](https://www.cnblogs.com/meituantech/p/9777222.html)——美团技术文章；
+- [空谈Security攻击方法之CSRF和XSS](https://cloud.tencent.com/developer/article/1584634)——作者介绍了 XSS、CSRF 和 CORS 间的关系；
+- [Web Security 之 CSRF](https://cloud.tencent.com/developer/article/1803714)；
+- [HTTP Referer 教程](http://www.ruanyifeng.com/blog/2019/06/http-referer.html)——CSRF 的预防；
+- [Content Security Policy 入门教程](http://www.ruanyifeng.com/blog/2016/09/csp.html)——XSS 的预防。
 
 ## 性能
 
@@ -1138,7 +1202,10 @@ CDN：避免 CDN 和应用服务器的域名相同，可以避免携带 cookie�
 ```
 
 
-重绘与回流：回流（位置、尺寸、字体）将引起重绘（边框、颜色、阴影）；把合适的样式设置成 position 或 fixed 会让元素提升到 Rander Layer，这样在回流操作时不会影响其它元素；可以使用**启动硬件加速**的方式，使用 GPU 进行绘制，避免重绘、回流。
+回流（重排）与重绘：
+- 回流（位置、尺寸、字体）将引起重绘（边框、颜色、阴影）；
+- 把合适的样式设置成 absolute 或 fixed 会让元素提升到 Rander Layer，这样在回流操作时不会影响其它元素，虽然不会回流，但仍然会导致重绘，因为 absolute 或 fixed 仍然属于默认符合图层；
+- 可以使用**启动硬件加速**的方式，使用 GPU 进行绘制，避免重绘、回流，因为这样生成了新的复合图层。
 
 常见触发回流的情况：初次渲染；元素大小变化；元素位置变化；窗口变化；插删 DOM 元素；激活伪类；改变字体。
 
@@ -1153,25 +1220,17 @@ CDN：避免 CDN 和应用服务器的域名相同，可以避免携带 cookie�
 - 异步不阻塞，前者适合用在业务代码，因为它在 DOMContentLoaded 后执行，后者适合用在第三方如统计代码，因为执行时间不确定（什么时候下载完不确定）；
 - defer 是“渲染完（DOM 结构完全生成，以及其他脚本执行完成）再执行”，async 是“下载完就执行” --- [js 文件加载的传统方法](https://es6.ruanyifeng.com/#docs/module-loader#%E4%BC%A0%E7%BB%9F%E6%96%B9%E6%B3%95)。
 
-### Reference
+### 相关链接
 
-> [Performance features reference](https://developer.chrome.com/docs/devtools/evaluate-performance/reference/)：解释了 Devtools 的性能面板，暂无译文（谷歌）
->
-> [渲染性能](https://developers.google.com/web/fundamentals/performance/rendering)：渲染性能的系列文章，均有译文（谷歌）
->
-> [浏览器的工作原理：新式网络浏览器幕后揭秘](https://www.html5rocks.com/zh/tutorials/internals/howbrowserswork/#Introduction)
->
-> [前端性能优化指南](https://segmentfault.com/a/1190000020867090)
-> 
-> [尾递归优化的支持度](http://kangax.github.io/compat-table/es6/)：浏览器会尾递归优化，一直递归不报错。
-> 
-> [Chrome DevTools 的使用](https://developers.google.com/web/tools/chrome-devtools/network/reference?utm_source=devtools#timing-explanation)：谷歌 DevTools 官网（英文），微软 Edge DevTools 官网有对应的中文版本。
->
-> [Web 性能优化（翻译）](https://www.bilibili.com/read/cv7148970)
-> 
-> [2019 前端性能优化年度总结（译文）](https://github.com/xitu/gold-miner/blob/master/TODO1/front-end-performance-checklist-2019-pdf-pages-6.md#62-%E6%98%AF%E5%90%A6%E8%AE%BE%E7%BD%AE%E4%BA%86%E6%8C%81%E7%BB%AD%E7%9B%91%E6%8E%A7)，[原文](https://www.smashingmagazine.com/2021/01/front-end-performance-2021-free-pdf-checklist/)
-> 
-> [Web 性能的方方面面](https://github.com/laoqiren/web-performance)：GitHub 文章，通过[掘金作者](https://juejin.cn/user/1697301683260343)跳转来，这位作者“自己动手撸一个静态博客生成器”。
+- [Performance features reference](https://developer.chrome.com/docs/devtools/evaluate-performance/reference/)：解释了 Devtools 的性能面板，暂无译文（谷歌）
+- [渲染性能](https://developers.google.com/web/fundamentals/performance/rendering)：渲染性能的系列文章，均有译文（谷歌）
+- [浏览器的工作原理：新式网络浏览器幕后揭秘](https://www.html5rocks.com/zh/tutorials/internals/howbrowserswork/#Introduction)
+- [前端性能优化指南](https://segmentfault.com/a/1190000020867090)
+- [尾递归优化的支持度](http://kangax.github.io/compat-table/es6/)：浏览器会尾递归优化，一直递归不报错。
+- [Chrome DevTools 的使用](https://developers.google.com/web/tools/chrome-devtools/network/reference?utm_source=devtools#timing-explanation)：谷歌 DevTools 官网（英文），微软 Edge DevTools 官网有对应的中文版本。
+- [Web 性能优化（翻译）](https://www.bilibili.com/read/cv7148970)
+- [2019 前端性能优化年度总结（译文）](https://github.com/xitu/gold-miner/blob/master/TODO1/front-end-performance-checklist-2019-pdf-pages-6.md#62-%E6%98%AF%E5%90%A6%E8%AE%BE%E7%BD%AE%E4%BA%86%E6%8C%81%E7%BB%AD%E7%9B%91%E6%8E%A7)，[原文](https://www.smashingmagazine.com/2021/01/front-end-performance-2021-free-pdf-checklist/)
+- [Web 性能的方方面面](https://github.com/laoqiren/web-performance)：GitHub 文章，通过[掘金作者](https://juejin.cn/user/1697301683260343)跳转来，这位作者“自己动手撸一个静态博客生成器”。
 
 ## 事件
 
@@ -1240,30 +1299,6 @@ elem.scrollTo(x, y) // 滚动至 (x, y) 处
 event.preventDefault() // 阻止默认事件，如果给监听器开启了 passive 为 true 的值，preventDefault 将被忽略，即遵循 passive 不阻止默认事件
 event.stopPropagation() // 阻止冒泡
 ```
-
-## 安全
-
-同源策略：ajax 请求时，浏览器当前网页和 server 必须同源（协议、域名、端口三者一致），但是图片（统计打点，第三方统计服务）、样式（CDN）和脚本（CDN, JSONP）的加载都无视同源。
-
-> http://www.ruanyifeng.com/blog/2016/04/same-origin-policy.html
-
-避免同源，跨域的方法：JSONP；CORS；WebSocket。
-
-JSONP：因为服务端可以返回任意数据，script 标签可以实现跨域，因此只要服务端**愿意**返回数据（合法 js 格式），就实现了获取跨域数据。
-
-*CORS：*
-
-- http://www.ruanyifeng.com/blog/2016/04/cors.html；
-- 有一些公共接口，通常用来测试 ajax 请求在应用中正常运作的状态，比如 https://dog.ceo/api/breeds/image/random，自己的应用中请求它将开启 cors，请求头中可以看见 origin 字段，响应头中可以看见 access-control-allow-origin 字段；
-- cors 有简单请求和非简单请求，请求方法是`HEAD, GET, POST`之一，HTTP 头信息不超出`Accept, Accept-Language, Content-Language, Last-Event-ID, Content-Type`这些字段，满足这两个条件就是简单请求，其它是非简单请求；
-- cors 中预检（preflight）请求的作用，preflight 出现在非简单请求中，客户端在正式发出请求前“先询问服务器，当前网页所在的域名是否在服务器的许可名单之中，以及可以使用哪些HTTP动词和头信息字段”，如果得到否定回复，触发的错误将被 XMLHttpRequest 的 onerror 回调函数捕捉；
-- 実践<small style="color: salmon">じっせん</small> CORS：https://www.cnblogs.com/MrSaver/p/11202319.html。
-
-XSS：嵌入 script 脚本，收割 cookie；XSS 攻击的处理 https://blog.alswl.com/2017/05/xss/；XSS 预防工具 https://github.com/leizongmin/js-xss/blob/master/README.zh.md。
-
-CSRF：https://www.cnblogs.com/meituantech/p/9777222.html。
-
-阮一峰-图解 SSL/TLS 协议：http://www.ruanyifeng.com/blog/2014/09/illustration-ssl.html。
 
 ### HTTP 协议
 
