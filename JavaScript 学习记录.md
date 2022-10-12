@@ -859,7 +859,10 @@ ninja 对象的原型链上不存在 Ninja 函数的原型（一个新的空对�
 相关链接：
 - [浏览器多进程和事件循环详解](https://www.jianshu.com/p/76a3a4f83d4f)；
 - [并发模型与事件循环](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/EventLoop)——MDN 的事件循环教程；
-- [JavaScript 运行机制详解：再谈Event Loop](https://www.ruanyifeng.com/blog/2014/10/event-loop.html)——阮一峰的事件循环教程。
+- [JavaScript 运行机制详解：再谈Event Loop](https://www.ruanyifeng.com/blog/2014/10/event-loop.html)——阮一峰的事件循环教程；
+- [loupe](http://latentflip.com/loupe/?code=JC5vbignYnV0dG9uJywgJ2NsaWNrJywgZnVuY3Rpb24gb25DbGljaygpIHsKICAgIHNldFRpbWVvdXQoZnVuY3Rpb24gdGltZXIoKSB7CiAgICAgICAgY29uc29sZS5sb2coJ1lvdSBjbGlja2VkIHRoZSBidXR0b24hJyk7ICAgIAogICAgfSwgMjAwMCk7Cn0pOwoKY29uc29sZS5sb2coIkhpISIpOwoKc2V0VGltZW91dChmdW5jdGlvbiB0aW1lb3V0KCkgewogICAgY29uc29sZS5sb2coIkNsaWNrIHRoZSBidXR0b24hIik7Cn0sIDUwMDApOwoKY29uc29sZS5sb2coIldlbGNvbWUgdG8gbG91cGUuIik7!!!PGJ1dHRvbj5DbGljayBtZSE8L2J1dHRvbj4%3D)——可视化事件循环；
+- [\[JS\] 理解 JavaScript 中的事件循環、堆疊、佇列和併發模式（Learn event loop, stack, queue, and concurrency mode of JavaScript in depth）](https://pjchender.dev/javascript/js-event-loop-stack-queue/)——“整理自 Philip Roberts 在 JS Conf 的演講影片”；
+- [Jake Archibald: 在循环 - JSConf.Asia](https://youtu.be/cCOL7MC4Pl0)——讲解了事件环、requestAnimationFrame 和微任务的关系。
 
 ## 浏览器模型
 
@@ -1032,6 +1035,91 @@ export default function XSS() {
 - [Web Security 之 CSRF](https://cloud.tencent.com/developer/article/1803714)；
 - [HTTP Referer 教程](http://www.ruanyifeng.com/blog/2019/06/http-referer.html)——CSRF 的预防；
 - [Content Security Policy 入门教程](http://www.ruanyifeng.com/blog/2016/09/csp.html)——XSS 的预防。
+
+## 设计模式
+
+单例模式：
+
+```javascript
+// 使用闭包实现单例模式
+function Singleton(data) {
+  this.data = data;
+}
+Singleton.getInstance = (function() {
+  var instance = null;
+  return (data) => {
+    if (instance == null) {
+	    instance = new Singleton(data);
+    }
+    return instance;
+  }
+})()
+
+var a = Singleton.getInstance("flower"); // Singleton {data: 'flower'}
+var b = Singleton.getInstance(); // Singleton {data: 'flower'}
+a === b; // true
+```
+
+观察模式：
+
+```javascript
+// 观察者实现一个通知方法（用于被目标对象通知）
+// 目标对象注册观察者，并调用观察者的通知方法来通知观察者
+class Observer {
+  constructor(name) {
+    this.name = name;
+  }
+  update() {
+    console.log("收到！");
+  }
+}
+class Subject {
+  constructor() {
+    this.observerList = [];
+  }
+  add(observer) {
+    this.observerList.push(observer); // 注册
+  }
+  notify() {
+    this.observerList.forEach(observer => observer.update()); // 通知
+  }
+}
+
+const Fixer = new Subject("Fixer"); // 目标对象
+const L = new Observer("Lucy"); // 观察者
+const D = new Observer("David"); // 观察者
+const M = new Observer("Maine"); // 观察者
+
+// 注册
+Fixer.add(L);
+Fixer.add(D);
+Fixer.add(M);
+
+// 通知
+Fixer.notify();
+```
+
+发布订阅模式：
+
+```javascript
+class Channel {
+  constructor() {
+    this.videos = {};
+  }
+  publish(video) {
+    if (this.videos[video]) {
+      this.videos[video].forEach(notify => notify());
+    }
+  }
+  subscribe(video, notify) {
+    if (this.videos[video]) {
+      this.videos[video].push(notify);
+    } else {
+      this.videos[video] = [notify];
+    }
+  }
+}
+```
 
 ## 性能
 
@@ -1462,6 +1550,9 @@ ESLint 工作原理探讨 https://www.jianshu.com/p/526db7eeeecc
 关于工具函数：设计工具函数的主要原则之一是尽可能保证功能单一性（工具函数单一性原则）。
 
 > 不论是面向服务器端的 CommonJS，还是针对浏览器的 AMD/CMD，都是在语言规范缺失时代背景下的折中产物 。
+
+相关链接：
+- [前端搞监控|Allan - 如何实现一套多端错误监控平台](https://www.yuque.com/zaotalk/posts/c5-5#De5Se)。
 
 ## Mock
 
