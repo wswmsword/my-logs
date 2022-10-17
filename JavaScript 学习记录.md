@@ -1305,7 +1305,7 @@ CDN：避免 CDN 和应用服务器的域名相同，可以避免携带 cookie�
 
 使用 defer 和 async：
 
-- 异步不阻塞，前者适合用在业务代码，因为它在 DOMContentLoaded 后执行，后者适合用在第三方如统计代码，因为执行时间不确定（什么时候下载完不确定）；
+- 异步不阻塞，前者适合用在业务代码，因为它在 DOMContentLoaded 前加载完，后者适合用在第三方如统计代码，因为执行时间不确定（什么时候下载完不确定）；
 - defer 是“渲染完（DOM 结构完全生成，以及其他脚本执行完成）再执行”，async 是“下载完就执行” --- [js 文件加载的传统方法](https://es6.ruanyifeng.com/#docs/module-loader#%E4%BC%A0%E7%BB%9F%E6%96%B9%E6%B3%95)。
 
 ### 相关链接
