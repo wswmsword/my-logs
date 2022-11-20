@@ -969,7 +969,8 @@ if 语句和逻辑运算里决定结果的 truely 和 falsely：
 - [\<img\> 无障碍考量](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/img#%E6%97%A0%E9%9A%9C%E7%A2%8D%E8%80%83%E9%87%8F)；
 - [响应式图片](https://developer.mozilla.org/zh-CN/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images)——MDN 的教程；
 - [响应式图片中srcset遇到的问题](https://www.whidy.net/responsive-image-dev-tips)——对 MDN 教程里给出的示例无法运行的思考；
-- [响应式图像教程](https://www.ruanyifeng.com/blog/2019/06/responsive-images.html)：阮一峰的响应式教程。
+- [响应式图像教程](https://www.ruanyifeng.com/blog/2019/06/responsive-images.html)：阮一峰的响应式教程；
+- [提供响应式图像](https://web.dev/serve-responsive-images/?utm_source=lighthouse&utm_medium=lr)——咕果教程。
 
 ## 安全性
 
@@ -1310,6 +1311,8 @@ CDN：避免 CDN 和应用服务器的域名相同，可以避免携带 cookie�
 
 ### 相关链接
 
+- [WHY YOUR WEBSITE SHOULD BE UNDER 14KB IN SIZE](https://endtimes.dev/why-your-website-should-be-under-14kb-in-size/)——“为什么网页应该小于 14kb”，点击查看译文“[资深 Web 开发的经验之谈：为什么你开发的网页不应该大于 14KB？](https://www.infoq.cn/article/r1bgrqiboqe5exgopmqi)”；
+- [JS Framework Benchmark](https://krausest.github.io/js-framework-benchmark/current.html)——框架基准测试；
 - [Performance features reference](https://developer.chrome.com/docs/devtools/evaluate-performance/reference/)：解释了 Devtools 的性能面板，暂无译文（谷歌）
 - [渲染性能](https://developers.google.com/web/fundamentals/performance/rendering)：渲染性能的系列文章，均有译文（谷歌）
 - [浏览器的工作原理：新式网络浏览器幕后揭秘](https://www.html5rocks.com/zh/tutorials/internals/howbrowserswork/#Introduction)
@@ -1318,7 +1321,11 @@ CDN：避免 CDN 和应用服务器的域名相同，可以避免携带 cookie�
 - [Chrome DevTools 的使用](https://developers.google.com/web/tools/chrome-devtools/network/reference?utm_source=devtools#timing-explanation)：谷歌 DevTools 官网（英文），微软 Edge DevTools 官网有对应的中文版本。
 - [Web 性能优化（翻译）](https://www.bilibili.com/read/cv7148970)
 - [2019 前端性能优化年度总结（译文）](https://github.com/xitu/gold-miner/blob/master/TODO1/front-end-performance-checklist-2019-pdf-pages-6.md#62-%E6%98%AF%E5%90%A6%E8%AE%BE%E7%BD%AE%E4%BA%86%E6%8C%81%E7%BB%AD%E7%9B%91%E6%8E%A7)，[原文](https://www.smashingmagazine.com/2021/01/front-end-performance-2021-free-pdf-checklist/)
-- [Web 性能的方方面面](https://github.com/laoqiren/web-performance)：GitHub 文章，通过[掘金作者](https://juejin.cn/user/1697301683260343)跳转来，这位作者“自己动手撸一个静态博客生成器”。
+- [Web 性能的方方面面](https://github.com/laoqiren/web-performance)：GitHub 文章，通过[掘金作者](https://juejin.cn/user/1697301683260343)跳转来，这位作者“自己动手撸一个静态博客生成器”；
+- [PageSpeed](https://pagespeed.web.dev/report?url=https%3A%2F%2Fwww.poinotes.com%2Fresume%2F)——不仅展示了一些主要的性能指标数据，还给出了部分性能优化建议。
+
+资料：
+- [High Performance Browser Networking](https://hpbn.co/)。
 
 ## 事件
 
@@ -1682,6 +1689,7 @@ ECMAScript 标准定义的 8 种数据类型：`Boolean, Null, Undefined, Number
 - [ECMAScript 6 入门](https://es6.ruanyifeng.com/?search=getter&x=0&y=0)
 - [现代 JavaScript 教程](https://zh.javascript.info/)
 - [微服务是什么？](https://www.ruanyifeng.com/blog/2022/04/microservice.html)
+- [Web 开发](http://www.alloyteam.com/category/webdevelop/)——腾讯前端博客。
 
 
 ## ふしぎなアメ

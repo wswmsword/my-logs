@@ -1026,6 +1026,12 @@ git shortlog -s
 git shortlog -s --all # -all 所有分支
 ```
 
+获取所有分支数量：
+
+```bash
+git branch --all | wc -l
+```
+
 切换上一次的分支：
 
 ```bash
@@ -1082,4 +1088,5 @@ git remote rename <old_name> <name> # 修改仓库名
 
 - [Git 实验仓库 - git-learning](https://github.com/wswmsword/git-learning)——我创建的用于执行本学习记录里每一条命令的 git 仓库；
 - [Setting up and using Meld as your git difftool and mergetool on a Mac](https://stackoverflow.com/a/43868889)；
-- [git-fire](https://github.com/qw3rtman/git-fire)——在紧急情况下保存代码。
+- [git-fire](https://github.com/qw3rtman/git-fire)——在紧急情况下保存代码；
+- [Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/cn/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)——GitHub 创建 SSH 文档。
