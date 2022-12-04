@@ -1,5 +1,6 @@
 # JavaScript 学习记录
 
+{{TOC}}
 
 ## 遗留问题
 
@@ -863,6 +864,11 @@ ninja 对象的原型链上不存在 Ninja 函数的原型（一个新的空对�
 - [loupe](http://latentflip.com/loupe/?code=JC5vbignYnV0dG9uJywgJ2NsaWNrJywgZnVuY3Rpb24gb25DbGljaygpIHsKICAgIHNldFRpbWVvdXQoZnVuY3Rpb24gdGltZXIoKSB7CiAgICAgICAgY29uc29sZS5sb2coJ1lvdSBjbGlja2VkIHRoZSBidXR0b24hJyk7ICAgIAogICAgfSwgMjAwMCk7Cn0pOwoKY29uc29sZS5sb2coIkhpISIpOwoKc2V0VGltZW91dChmdW5jdGlvbiB0aW1lb3V0KCkgewogICAgY29uc29sZS5sb2coIkNsaWNrIHRoZSBidXR0b24hIik7Cn0sIDUwMDApOwoKY29uc29sZS5sb2coIldlbGNvbWUgdG8gbG91cGUuIik7!!!PGJ1dHRvbj5DbGljayBtZSE8L2J1dHRvbj4%3D)——可视化事件循环；
 - [\[JS\] 理解 JavaScript 中的事件循環、堆疊、佇列和併發模式（Learn event loop, stack, queue, and concurrency mode of JavaScript in depth）](https://pjchender.dev/javascript/js-event-loop-stack-queue/)——“整理自 Philip Roberts 在 JS Conf 的演講影片”；
 - [Jake Archibald: 在循环 - JSConf.Asia](https://youtu.be/cCOL7MC4Pl0)——讲解了事件环、requestAnimationFrame 和微任务的关系。
+
+## console
+
+相关链接：
+- *‌https://developer.chrome.com/docs/devtools/console/api/*
 
 ## 浏览器模型
 

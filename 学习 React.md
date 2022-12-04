@@ -207,7 +207,8 @@ function useToggle(initialValue) {
 ```
 
 相关链接：
-- [Understanding useMemo and useCallback](https://www.joshwcomeau.com/react/usememo-and-usecallback/#an-alternative-approach)——英文，解释了 useMemo 和 useCallback，有丰富直观的交互和案例代码。
+- [Understanding useMemo and useCallback](https://www.joshwcomeau.com/react/usememo-and-usecallback/#an-alternative-approach)——英文，解释了 useMemo 和 useCallback，有丰富直观的交互和案例代码；
+- [一直以来`useCallback`的使用姿势都不对](https://segmentfault.com/a/1190000022988054)——解释 useCallback 以及替代方案 useReducer 和 useContext。
 
 ## useRef
 
@@ -236,6 +237,19 @@ function usePrevious<T>(value: T): T {
 
 相关链接：
 - [useRef](https://zh-hans.reactjs.org/docs/hooks-reference.html#useref)—— React 官方文档。
+
+## useLayoutEffect
+
+相关链接：
+- [React useLayoutEffect](https://weiyun0912.github.io/Wei-Docusaurus/docs/React/Hooks/React-useLayoutEffect/)——useEffect 的闪屏问题。
+
+## useImpreativeHandle
+
+> “可以通过 useImperativeHandle Hook 暴露一些命令式的方法给父组件。”——*https://zh-hans.reactjs.org/docs/hooks-faq.html#can-i-make-a-ref-to-a-function-component*
+
+相关链接：
+- [React Hooks: 使用 useImperativeHandle 來跟子元件互動](https://z3388638.medium.com/react-hooks-%E4%BD%BF%E7%94%A8-useimperativehandle-%E4%BE%86%E8%B7%9F%E5%AD%90%E5%85%83%E4%BB%B6%E4%BA%92%E5%8B%95-2b543bec3e8a)；
+- *‌https://codesandbox.io/s/romantic-ritchie-jvkdu?file=/src/components/BaseInput/index.jsx*——一个 useInperativeHandle 的在线例子。
 
 ## 自定义 Hook
 
@@ -270,6 +284,13 @@ function MyComponent() {
 ## Portals
 
 令子节点渲染到父组件外的指定 DOM 里，`ReactDOM.createPortal(child, container)`。用在如 body 层的 fixed 的 position，跳出父元素的 hidden overflow 或 z-index。
+
+## 动画
+
+高度位置的高度动画：
+- *‌https://github.com/chenglou/react-motion/issues/62*，GitHub 提问
+- *‌https://stackoverflow.com/questions/29337045/how-to-animate-element-height-in-react-with-reactcsstransitiongroup*，stack overflow 提问
+- *‌https://github.com/Stanko/react-animate-height*，库
 
 ## パフォーマンス最適化<small style="color: salmon">さいてきか</small>
 
