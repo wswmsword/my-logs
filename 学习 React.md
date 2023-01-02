@@ -251,6 +251,11 @@ function usePrevious<T>(value: T): T {
 - [React Hooks: 使用 useImperativeHandle 來跟子元件互動](https://z3388638.medium.com/react-hooks-%E4%BD%BF%E7%94%A8-useimperativehandle-%E4%BE%86%E8%B7%9F%E5%AD%90%E5%85%83%E4%BB%B6%E4%BA%92%E5%8B%95-2b543bec3e8a)；
 - *‌https://codesandbox.io/s/romantic-ritchie-jvkdu?file=/src/components/BaseInput/index.jsx*——一个 useInperativeHandle 的在线例子。
 
+## cloneElement
+
+相关链接：
+- [Advanced composition in React: cloneElement, HOCs and renderProps](https://medium.com/trabe/advanced-composition-in-react-cloneelement-hocs-and-renderprops-a20971aec50e)——medium 文章；
+
 ## 自定义 Hook
 
 独自<small style="color: salmon">どくじ</small>の Hooks を作成<small style="color: salmon">さくせい</small>する、例を挙げましょう：https://codesandbox.io/s/react-useeffect-redux-ghl7c；把公共的逻辑代码提取到函数中，然后像调用函数一样调用它。

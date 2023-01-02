@@ -1306,7 +1306,9 @@ CDN：避免 CDN 和应用服务器的域名相同，可以避免携带 cookie�
 
 减少重绘与回流的方法：避免 table；读写分离，批处理写；scrollWidth, scrollHeight, scrollTop, scrollLeft, getBoundingClientRect()...，把这些任务缓存；使用类名修改样式，避免 style 属性；复杂动画的 absolute 和 fixed。
 
-关于 drawTextBlob：https://stackoverflow.com/questions/33173919/timeline-paint-profiler-in-devtools-suggests-everything-is-being-painted；https://zhuanlan.zhihu.com/p/63318397。
+关于 drawTextBlob：
+- *https://stackoverflow.com/questions/33173919/timeline-paint-profiler-in-devtools-suggests-everything-is-being-painted*——关于 drawTextBlob；
+- [浏览器渲染过程概述](https://zhuanlan.zhihu.com/p/63318397)——知乎文章。
 
 ---
 

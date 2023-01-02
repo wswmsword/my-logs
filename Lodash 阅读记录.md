@@ -305,6 +305,10 @@ memoizedFunc(1, 9, 9); // 这里将会使用 resolver(1, 9, 9) 的值作为缓�
 
 uniq, baseProperty, times, getTag, isSymbol, toKey, memoize, memoizeCapped, stringToPath, map, toPath, flip, delay
 
+## 标记
+
+- toArray，做了 utf-16 长度的兼容。
+
 ## 问题
 
 p/isSymbol：`value != null`的作用？
