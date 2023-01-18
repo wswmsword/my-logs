@@ -8,4 +8,5 @@
 - [10/12/20-08/05/22开发过程中的问题和解决方案](./10-12-20-08-05-22%E5%BC%80%E5%8F%91%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%97%AE%E9%A2%98%E5%92%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.md)
 - [后视镜里母亲的眼睛](./Mother'sEyes.md)
 - [翻译/](./%E7%BF%BB%E8%AF%91/)
+	- [JavaScript 有个 Unicode 天坑](./%E7%BF%BB%E8%AF%91/JavaScript%20%E6%9C%89%E4%B8%AA%20Unicode%20%E5%A4%A9%E5%9D%91.md)
 	- [What makes Git so hard to use? 是什么让 Git 那么难用？](./%E7%BF%BB%E8%AF%91/What%20makes%20Git%20so%20hard%20to%20use.md)
