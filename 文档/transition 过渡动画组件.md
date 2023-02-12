@@ -16,7 +16,7 @@
 
 下面的图片是首页的界面，包含了滑行动画（slide 组件）、缩放动画（zoom 组件）和渐变动画（fade 组件），这些动画都使用了过渡组件：
 
-transitions.gif
+![页面上使用组件后各种过渡动画的效果](transitions.gif)
 
 ## 属性
 
@@ -50,17 +50,17 @@ transitions.gif
 
 这是一个“朝阳升起夕阳沉落动画”的例子，例子里使用过渡组件，并以最快、最简单的方式完成了动画，且会在完成动画后卸载组件（函数 sunsetTime），下面的图片是所有代码：
 
-risen-sun-transition-code.png
+![实现升起降落动画的全部代码](risen-sun-transition-code.png)
 
 上面的动画代码仅仅利用了过渡组件（transition），并且传入动画样式字符串，完成了一个过渡动画。
 
 下面的动图是动画的效果：
 
-risen-sun-transition.gif
+![升起降落过渡动画的展示效果](risen-sun-transition.gif)
 
 下面是页面（wxml）代码：
 
-```
+```html
 <view style="width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center">
   <block wx:if="{{loadedComponent}}">
     <transition
@@ -113,7 +113,7 @@ Page({
 
 下面是页面配置（json）代码：
 
-```
+```json
 {
   "component": true,
   "navigationStyle": "custom",
@@ -127,7 +127,7 @@ Page({
 
 下面的图片是利用过渡组件实现了一个常见动画组件的代码内容（缩放动画）：
 
-zoom-transition.png
+![使用过渡动画组件封装的缩放动画组件的全部代码](zoom-transition.png)
 
 上面图片里的四个文件中，最重要的是“`index.less`”，可以看到“`index.less`”中有 4 个 class，分别表示缩放过渡动画的 4 个阶段，入场动画初始状态、入场动画结束状态、退场动画初始状态和退场动画结束状态。
 
@@ -137,7 +137,7 @@ zoom-transition.png
 
 另一个重要的事情是在完成动画后卸载，下面图片中的代码演示了在使用缩放组件时动画结束后卸载组件的方法：
 
-back-top-zoom.png
+![向缩放动画组件传递卸载组件方法的代码](back-top-zoom.png)
 
 可以看到上面的图中，“`index.wxml`”中向缩放动画组件标签（`<zoom />`）传递了 exited 方法，exited 方法是退场动画结束时的钩子，执行后变量 `loadedComp` 被设置成 false，组件卸载了。
 
@@ -145,11 +145,11 @@ back-top-zoom.png
 
 下面的图片是过渡组件相关文件的结构或关联情况：
 
-yp-transition-components.png
+![过渡动画组件相关文件之间的关联情况](yp-transition-components.png)
 
 下面的图片是过渡组件在编辑器中的树形结构情况：
 
-yp-transition-dir.png
+![过渡动画组件相关文件在编辑器的文件树形结构情况](yp-transition-dir.png)
 
 ## ⚠️ 警告 ⚠️
 
@@ -178,3 +178,7 @@ yp-transition-dir.png
 - 缩放，`/components/base/anime/zoom/index`
 - 褪色（渐变），`/components/base/anime/fade/index`
 - 滑行，`/components/base/anime/slide/index`
+
+同类组件：
+- [过渡 Transition](https://doc.mini.talelin.com/component/animation/transition.html)
+- [CSSTransition](http://reactcommunity.org/react-transition-group/css-transition)
