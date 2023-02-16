@@ -2,6 +2,8 @@
 
 {{TOC}}
 
+[查看源码文件](../%E6%BA%90%E7%A0%81/%E8%BF%87%E6%B8%A1%E5%8A%A8%E7%94%BB%E7%BB%84%E4%BB%B6/)
+
 本组件（后面简称“过渡组件”）用来完成有**入场**和**退场**状态的动画。
 
 过渡组件的路径：`/components/base/anime/transition/index`

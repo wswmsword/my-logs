@@ -1,0 +1,7 @@
+<view
+  class="wrapper {{IS_INIT_BITS? 'enter-class' : ''}} {{IS_ENTER_BITS ? 'enter-class' : ''}} {{IS_ENTER_ACTIVE_BITS ? 'enter-active-class' : ''}} {{IS_EXIT_BITS ? 'exit-class' : ''}} {{IS_EXIT_ACTIVE_BITS ? 'exit-active-class' : ''}} {{noTransition || (ignoreFirst && !ignoredFirst) ? 'no-transition' : ''}} {{isWrap ? '' : 'expantion'}} {{position ? 'fixed ' + position : ''}} position-class"
+  style="{{initedStyleStr ? styleStr : (positionStyle + enterStyle)}}"
+  bind:transitionend="enteredOrExited">
+  <!-- 上面 stye 属性里，“enterStyle”用于表示动画元素的初始状态样式 -->
+  <slot></slot>
+</view>

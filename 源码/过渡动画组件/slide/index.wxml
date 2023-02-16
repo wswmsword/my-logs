@@ -1,0 +1,17 @@
+<transition
+  opened="{{opened}}"
+  enter-class="{{'enter-' + direction}}"
+  enter-active-class="enter-active"
+  exit-class="exit"
+  exit-active-class="{{'exit-active-' + direction}}"
+  position-class="position-class"
+  isWrap="{{isWrap}}"
+  duration="{{duration}}"
+  positionStyle="{{positionStyle}}"
+  noTransition="{{noTransition}}"
+  bind:entering="entering"
+  bind:entered="entered"
+  bind:exiting="exiting"
+  bind:exited="exited">
+  <slot></slot>
+</transition>
