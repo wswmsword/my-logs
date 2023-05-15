@@ -52,7 +52,7 @@ Spotify 的使命是让数十亿的粉丝有机会享受到艺术家的作品，
 在你应用中，所有的视觉、非文字元素都应该附有可替换文字描述（“alt 描述”作为简写），这些文字描述非文字元素的细节，这些文字为辅助技术用户的提供了必要的环境和背景。
 
 **A11y 行动：**
-1. 为所有的图片元素添加文字描述属性，例如，![两只小猫玩毛线球](https://developer.spotify.com/cats.gif)；
+1. 为所有的图片元素添加文字描述属性，例如，<img src="https://developer.spotify.com/cats.gif" alt="两只小猫玩毛线球">；
 2. 或者，在非文本元素之下添加细节标题；
 3. 对于完全装饰性图片，添加空的 `<alt="">` 属性，以便于屏幕阅读器跳过它们。
 
@@ -76,6 +76,99 @@ Spotify 的使命是让数十亿的粉丝有机会享受到艺术家的作品，
 
 ### 按钮
 
-> To be continued.
+按钮是应用的用户触发行为的重要方式。
+
+**A11y 行动：**
+1. 纯图标按钮应该包含标注信息，用来提供按钮操作的上下文；
+2. 禁用状态的按钮通常用来表示，在进入下一步前需要完成当前的操作。然而，屏幕阅读器不能访问禁用按钮，而且对于辅助技术用户，往往不清楚完成一系列操作之后会发生什么。添加标注信息来描述按钮为什么被禁用，以及需要做什么才能激活按钮；
+3. 关于按钮的尺寸，确保为用户提供宽松的操作区域，例如，[iOS 的最小触摸尺寸是 44x44 点](https://developer.apple.com/design/human-interface-guidelines/foundations/layout/)，安卓则是 48x48 点；
+4. 默认考虑使用内置按钮（网页和移动端），因为它们有预设的样式和 a11y 特性，例如触摸尺寸、tab 聚焦、聚焦高亮以及交互快捷键（不是每个人都是用指针设备进行交互）。
+
+**资源：**
+- [Accessibility guidelines on links, images and other clickable elements](http://web-accessibility.carnegiemuseums.org/content/buttons/)
+- Find detailed recommendations about share buttons and best practices around them in the [Share Buttons](https://developer.spotify.com/documentation/accessibility#share-buttons) section of this a11y guide.
+
+### 色彩对比度
+
+色彩对比度衡量颜色之间的差异程度——相对的颜色有最高的对比度，色轮上相邻的颜色有最小的对比度。
+
+**A11y 行动：**
+
+WCAG 推荐
+1. 背景和前景的色彩对比度应该要达到 4.5:1；
+2. 图标和背景的对比度要达到 3:1。
+
+**资源：**
+- You can use [this color contrast resource by WebAIM](https://webaim.org/articles/contrast/) to guide you on what ratio to aim for.
+- You can use [WebAIM’s color contrast checker tool](https://webaim.org/resources/contrastchecker/) to confirm that the colors you are using are appropriately contrasted.
+
+### 标题
+
+页面标题是屏幕阅读器和其它辅助技术在页面导航的主要方式。有效识别标题有利于辅助技术用户快览内容，并跳转到感兴趣的区域。
+
+**A11y 行动：**
+1. 使用 HTML 标签来标注标题。例如，这是[一份在 web 使用 `<header>` 标签的指南](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/header)；
+2. 按层次组织标题，不要跳级，比如 H2 应该跟随 H1，不要跳到 H3，也不要让 H4 跟随 H1；
+3. 在原生移动端应用里，您也可以配置标题，让用户快速探索并快速导航，通过使用简单的手势在标题间跳转。
+
+**资源：**
+- [Web Accessibility Initiative (WAI) Guide to Headings](https://www.w3.org/WAI/tutorials/page-structure/headings/)
+- [Digitally Accessible Headings by Princeton University](https://accessibility.princeton.edu/how/content/headings)
+
+### 模态框
+
+模态弹窗是弹出的一段信息，通常用于促使用户完成指定操作，或者提供更多的内容信息。
+
+**A11y 行动：**
+
+由于模态弹窗同样提供了有效信息，但是同时也破坏了页面原先的信息流，所以为用户提供完全可控的打开和关闭模态弹窗是很重要的。一个可访问的模态弹窗是这样的
+1. 为屏幕阅读器提供正确信息；
+2. 正确管理键盘焦点，您可以使用 HTML 和 ARIA 来提供语意信息，使用 JavaScript 来改变行为，使用 CSS 来指定样式。
+
+> 一个常见错误是，打开模态弹框后焦点没有聚焦在弹框之上，又或者聚焦到了模态弹窗之后的内容里。请测试应用的模态弹框，并且修复纠正行为。
+
+**资源：**
+- [How to test an alert / modal dialog](https://www.magentaa11y.com/checklist-native/alert-dialog/)
+
+### 多种模式
+
+重要的信息应该被以多种方式传递，例如——色彩、触觉、声音、文本与图标——人人可感知。
+
+考虑表单里的一个文本框，当用户输入非法信息，文本框就会高亮红色：如果开发者没有积极适配，色盲用户也许无法感知，屏幕阅读器也许无法识别。在出问题地方的旁边添加一些信息，来说明问题的缘由和解决问题的办法，让每个人都能理解问题。冗余在这种情况反而更有帮助。你呈现信息的方式越多，越方便用户理解。
+
+**资源：**
+- [WCAG 2.1 (Level A) 1.4.1 Success Criteria: Use of Color](https://www.w3.org/WAI/WCAG21/quickref/?showtechniques=141#use-of-color)
+
+### 操作顺序
+
+如果你的应用程序为用户的操作提供了选择，确保首先在这些选项中展示伤害程度最小的选项。例如，提醒用户确认删除选中的播放列表的时候，首先应该高亮**同意**，而不是**返回**（译者不理解，**返回**没有伤害，不是应该首先高亮**返回**吗）；或者如果有**返回**和**确认**作为选项，首先应该高亮**返回**，因为返回更容易做补救措施（返回之后可以撤销重做）。
+
+> 处于时间成本考虑，如果用户选择了**取消**，考虑回到最近的状态，也就是表单被填满的状态，而不是丢弃所有输入、清空表单的状态。
+
+### Share Buttons
+
+> to be continued
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
