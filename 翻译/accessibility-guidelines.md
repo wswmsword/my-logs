@@ -1,5 +1,13 @@
 # 可访问性指南
 
+原文：*https://developer.spotify.com/documentation/accessibility*
+
+原文日期：无日期
+
+原文作者：[Spotify for Developers](https://developer.spotify.com/)
+
+翻译日期：05/17/23 10:29:16 Wed CST
+
 ## 简介
 
 ### 什么是可访问性？
@@ -123,7 +131,7 @@ WCAG 推荐
 
 由于模态弹窗同样提供了有效信息，但是同时也破坏了页面原先的信息流，所以为用户提供完全可控的打开和关闭模态弹窗是很重要的。一个可访问的模态弹窗是这样的
 1. 为屏幕阅读器提供正确信息；
-2. 正确管理键盘焦点，您可以使用 HTML 和 ARIA 来提供语意信息，使用 JavaScript 来改变行为，使用 CSS 来指定样式。
+2. 正确管理键盘焦点，您可以使用 HTML 和 ARIA 来提供语义信息，使用 JavaScript 来改变行为，使用 CSS 来指定样式。
 
 > 一个常见错误是，打开模态弹框后焦点没有聚焦在弹框之上，又或者聚焦到了模态弹窗之后的内容里。请测试应用的模态弹框，并且修复纠正行为。
 
@@ -177,27 +185,53 @@ Medium-term wins 是指要比[可访问性 quick wins](#quick-wins)花费更多�
 
 > 检测无障碍导航最好的方法之一，就是挑战[只用键盘或者不用鼠标](https://nomouse.org/)访问网页，或者用屏幕阅读器访问手机应用。
 
-### 顺序与分组
+### 列表与分组
 
-> to be continued
+在应用程序里对有联系的部分进行分组，这可以让使用屏幕阅读器进行导航的用户更容易跟进流程、把控全局。任何在视觉上是分组的部分，在语义上也要同样如此。
 
+**A11y 行动：**
+1. 关于有序和无序列表，
+2. 对于菜单的每一个子项使用无序列表，这样可以用随机顺序进行访问和消费菜单，
+3. 如果是重要的系统性导航，使用有序列表实现菜单，
+4. 遵守列表规则，
+5. 有序或无序列表的子元素只有 list 标签（`<li>`），避免添加其它元素。
 
-
-
-
-
-
-
-
-
-
-
+**资源：**
+- [Principles of improving app accessibility in Android - groups of related content](https://developer.android.com/guide/topics/ui/accessibility/principles#content-groups)
 
 
+### 语义
 
+语义元素是指提供了上下文以及内容性质的元素，例如`<header>`、`cite`、`section`、`p`、`footer`，[等等](https://developer.mozilla.org/en-US/docs/Web/HTML/Element)，例如`<div>`、`<span>`这样的非语义元素则不提供目标内容的上下文。
 
+构成语义元素的四个属性是
+- name（一个元素的标签）；
+- role（描述元素的功能，例如输入 input 和按钮 button）；
+- value（对 role 进行补充，例如 input=text）
+- state（表达元素的配置情况，例如已打开 enabled、已收起 collapsed 等等）。
 
+**A11y 行动：**
+1. 把所有 `<div>`、`<span>` 之类的非语义标签替换为语义标签。
 
+**资源：**
+- [State Descriptions on Android](https://medium.com/google-developer-experts/state-descriptions-on-android-b2029283871f)
 
+## Intensive Wins
 
+Intensive Wins 是指那些比 [quick wins](#quick-wins) 和 [medium-term wins](#medium-term-wins) 需要做更多时间进行实现的修改。这些都很重要，我们强烈建议优先纳入您的应用里。
 
+### 掌握辅助技术
+
+挑选和熟练一种辅助技术，例如语音对讲技术，例如 voice-over 或者 NVDA 这种提供了很多免费范例的开源软件（OSS）。
+
+### 掌握 A11y 的状态（states）
+
+正如在[语义](#语义)提到的，`states` 是分配给元素的语义属性，用来指定元素内容的配置状态，例如已选中、已打开、已展开、已隐藏等等。
+
+状态和属性归为四类：(i) 拖拽属性；(ii) 活动区域属性；(iii) 组件属性；(iv) 关系属性。
+
+**A11y 行动：**
+1. 定义元素时，尽管声明状态是可选的，但是便于辅助技术使用，声明状态仍是最佳实践。
+
+**资源：**
+- [WCAG on states and properties](https://www.w3.org/TR/wai-aria/#states_and_properties)
