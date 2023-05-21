@@ -8,6 +8,7 @@
 - [10/12/20-08/05/22开发过程中的问题和解决方案](./10-12-20-08-05-22%E5%BC%80%E5%8F%91%E8%BF%87%E7%A8%8B%E4%B8%AD%E7%9A%84%E9%97%AE%E9%A2%98%E5%92%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.md)
 - [最近三个月编写的 transition 过渡动画组件](./%E6%9C%80%E8%BF%91%E4%B8%89%E4%B8%AA%E6%9C%88%E7%BC%96%E5%86%99%E7%9A%84%20transition%20%E8%BF%87%E6%B8%A1%E5%8A%A8%E7%94%BB%E7%BB%84%E4%BB%B6.md)
 - [翻译/](./%E7%BF%BB%E8%AF%91/)
+  - [接受 #NoMouse 挑战！](./%E7%BF%BB%E8%AF%91/nomouse.md)
   - [可访问性指南](./%E7%BF%BB%E8%AF%91/accessibility-guidelines.md)
   - [键盘导航-常见问题](./%E7%BF%BB%E8%AF%91/keyboard-navigation-faq.md)
   - [键盘无障碍](./%E7%BF%BB%E8%AF%91/keyboard-accessibility.md)
