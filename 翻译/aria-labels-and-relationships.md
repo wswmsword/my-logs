@@ -1,4 +1,4 @@
-# ARIA 标注和关系
+# ARIA 标注和 ARIA 关系
 
 原文：*https://web.dev/aria-labels-and-relationships/*
 
@@ -6,7 +6,7 @@
 
 原文作者：[Meggin Kearney](https://web.dev/authors/megginkearney/)、[Dave Gash](https://web.dev/authors/dgash/)、[Alice Boxhall](https://web.dev/authors/aliceboxhall/)
 
-翻译日期：翻译中
+翻译日期：05/26/23 09:34:28 May CST
 
 利用 ARIA 标签创建可访问的元素描述。
 
@@ -57,10 +57,19 @@ ARIA 规范列出了 8 个关系属性。其中六个是，`aria-activedescendan
 
 ### aria-describedby
 
-> to be continued
+`aria-describedby` 使用和 `aria-labelledby` 同样的方式提供可访问性的描述。就像 `aria-labelledby`，无论元素是否可见、是否在 DOM 上隐藏、是否对辅助技术用户隐藏，`aria-describedby` 都可以引用这个元素。当用户需要一些额外的解释性文字的时候，这种技术无论是对辅助技术还是任何用户都是有用的。
 
+一个常见的例子是密码输入框，在输入框的旁边有一段解释需要最短字符数的描述性文字。和标注不一样，这种描述不一定会展示给用户；用户可以选择是否访问，或者这些描述会在所有信息之后，又或者它会被其他信息打断。例如，用户此时正在输入信息，他们的输入会得到反馈，并且可能会打断关于输入的描述。所以，一份描述是传递补充信息的好方法，却不是必要的；它不会妨碍例如元素角色之类的关键信息。
 
+![使用 aria-describedby 来声明密码输入框的联系。](./aria-describedby.jpg)
 
+### aria-posinset & aria-setsize
+
+剩下的关系属性有些特殊，它们互相协同工作。`aria-posinset`（“position in set”）和 `aria-setsize`（“size of set”）是定义集合中的兄弟元素的关系的，例如列表。
+
+当一个集合的大小不能通过 DOM 内已存在的元素决定时——例如使用懒加载避免一次性大量渲染——`aria-setsize` 指定集合的实际大小，`aria-posinset` 指定元素在集合的位置。举个例子，一个 1000 个元素的集合，即使某个元素第一个展示你也可以说它的 `aria-posinset` 是 857，并且同时要确保通过动态 HTML 技术让用户按需正确访问到了列表的指定位置。
+
+![使用 aria-posinset 和 aria-setsize 来声明列表间的关系。](./aria-posinset.jpg)
 
 
 
