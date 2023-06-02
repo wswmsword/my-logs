@@ -74,8 +74,45 @@ ARIA 规范把包含多个可聚焦元素的 UI 组件成为一个[复合](https
 
 ## 何时让选中同步聚焦
 
-> to be continued
+在只能选中一个元素的组合微件中，移动焦点可能会导致聚焦元素成为选中的元素，例如选项卡或者单选列表框。这就是所谓的选中聚焦。选中聚焦通常对用户友好，但在有些情况，也会有害可访问性。
 
+举个例子，一个选项卡，选中的状态表示哪一个面板正在被展示。如果在选项卡使用选中聚焦，焦点在不同选项间移动会自动改变选项面板的展示。如果内容是保存在 DOM 中，那么一个新的面板会在瞬间被展示。如果键盘用户希望展示一共六个选项卡的第三个，只需要快速按下右箭头 3 次即可。并且，通过选项的标注来导航的屏幕阅读器用户可以高效、无延迟地阅读完整的内容。
+
+但是，如果展示新的选项面板会导致网络请求或页面刷新，那么对于键盘和屏幕阅读器用户，选中聚焦的体验是极差的。这样的场景，展示第四个选项面板时，在每一移动焦点的严重延迟下，会变得单调且耗时。如果展示一个新面板会导致页面刷新，那用户不仅要等待加载，还要重新导航到选项卡。
+
+如果不使用选中聚焦，用户要可以通过按下 <kbd>Enter</kbd> 或 <kbd>Space</kbd> 来执行选中。
+
+## 组件之间的键盘导航（Tab 序列）
+
+正如在[基本的键盘导航约定](#基本的键盘导航约定)一节中解释的，所有的交互式 UI 组件都需要能通过键盘访问。This is best achieved by either including them in the tab sequence or by making them accessible from a component that is in the tab sequence, e.g., as part of a composite component.本章节讨论了如何建立和管理 tab 序列，随后的章节介绍如何使组件内的可聚焦元素变得键盘可访问。
+
+[HTML tabindex](https://html.spec.whatwg.org/multipage/interaction.html#the-tabindex-attribute) 和 [SVG2 tabindex](https://www.w3.org/TR/SVG2/struct.html#tabindexattribute) 属性可以被用来把某个元素加入或者删除 tab 序列。tabindex 的值也会影响 tab 序列的顺序，但还是强烈建议不要使用 tabindex 来改变顺序。
+
+HTML 里，默认情况下，tab 序列包括链接和 HTML 表单元素，在 macOS 下只有表单元素。macOS 的偏好设置里有键盘的设定选项，打开后能够让 tab 按键访问所有的可聚焦元素（包括链接）。
+
+默认的 tab 序列的顺序是元素在 DOM 里的顺序。DOM 的顺序也决定了屏幕阅读器的阅读顺序。保持键盘的 tab 序列和屏幕阅读器阅读顺序一致、有逻辑、可预测（[可辨识和可预测的键盘焦点](#可辨识和可预测的键盘焦点)）很重要。在操作 tab 序列的同时维持阅读顺序的一致，最鲁棒的方法就是在浏览器中对 DOM 元素进行重新排序。
+
+Tabindex 的值会产生以下影响。
+
+**‌无 tabindex 属性或者不是有效的值**
+
+元素会保持默认的聚焦行为。在 HTML 中，只有表单控件和带 HREF 属性的链接会被包含 tab 序列。
+
+**tabindex="0"**
+
+元素基于在 DOM 中的位置被包含在 tab 序列中。
+
+**tabindex="-1"**
+
+元素不在 tab 序列内，但是可以通过 element.focus() 聚焦。
+
+**‌tabindex="X"，X 是一个大于 0 小于 32768 的整数**
+
+强烈不建议使用这些值。元素会基于 tabindex 的值决定在 tab 序列中的位置。tabindex 值为 0 的元素的默认访问顺序会排在 tabindex 值为 1 或大于 1 的元素之后。
+
+## 组件内部的键盘访问
+
+> to be continued
 
 
 
