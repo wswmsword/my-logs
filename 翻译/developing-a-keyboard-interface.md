@@ -112,9 +112,51 @@ Tabindex 的值会产生以下影响。
 
 ## 组件内部的键盘访问
 
+正如在[基本的键盘导航约定](#基本的键盘导航约定)中介绍的，在 tab 序列里，一个组合 UI 组件只能包含一个可聚焦元素。只要组件内有了焦点，就需要用除 <kbd>Tab</kbd> 和 <kbd>Shift + Tab</kbd> 以外的按键来让用户在可聚焦元素之间移动。开发者可以自由设定组件内移动焦点的按键，但是强烈建议如 [APG 模版](https://www.w3.org/WAI/ARIA/apg/patterns/)里介绍的，使用和通用 GUI 操作系统的组件类似的键盘按键设定。
+
+当通过 <kbd>Tab</kbd> 让一个组件获得了焦点，这个焦点的位置由组件的类型决定。通常这是下面几种情况。
+- 元素的焦点是组件最后一次聚焦焦点的位置。或者，改组件还没有被聚焦过，那么元素的焦点是第一个元素。表格和树形表格通常会使用这个模式。
+- 选中的元素。或者，如果没有元素被选中过，那么第一个元素被聚焦。通常单选组、选项卡、列表框、树形结构之类的微件会使用这个模式。注意：对于选项组，聚焦的元素的状态是 checked，而不是 selected，状态 selected 不支持单选按钮。
+- 第一个元素。这种模式被用在菜单或工具栏上。
+
+下面的小节解释了组件中管理焦点的两个策略：创建流动 index 和使用属性 aria-activedescendant。
+
+### 使用流动 tabindex 管理组件内的焦点
+
+当用流动 tabindex 管理 UI 组件焦点的时候，在 tab 序列的元素 tabindex 为 “0”，而其它的可聚焦元素的 tabindex 为 “-1”。下面的算法描述了流动 tabindex 策略。
+- 当组件被创建，把将要被初始化包含在 tab 序列的元素设置为 `tabindex=0`，其它的可聚焦元素设置为 `tabindex=-1`；
+- 如果组件包含焦点，用户在组件里按下导航按键移动焦点，例如方向键：
+	- 将 `tabindex=0` 的元素设为 `tabindex=-1`；
+	- 将通过键盘事件即将聚焦的元素设为 `tabindex=0`;
+	- 进行聚焦，对有 `tabindex=0` 的元素执行 `element.focus()`。
+- 如果设计上要求通过 <kbd>Tab</kbd> 和 <kbd>Shift+Tab</kbd> 来聚焦组件的特定元素，那么当组件失去焦点的时候，也要检查目标元素是否有 `tabindex=0`。如果没有，需要为目标元素设置 `tabindex=0`，并且为之前是 `tabindex=0` 的元素设置为 `tabindex=-1`。
+
+使用流动 tabindex 管理焦点相对于 aria-activedescendant 的一个好处是，可以让用户代理的视图滚动到最近聚焦的地方。
+
+### 使用 aria-activedescendant 管理组件内的焦点
+
+如果组件有支持属性 aria-activedescendant 的 ARIA 角色，那么操作 tabindex 来移动焦点就不是必须的了。取而代之，只有容器元素需要在 tab 序列中。当容器有了 DOM 焦点，容器上的 aria-activedescendant 的值就会告诉辅助技术，微件中的哪个元素是活跃元素。辅助技术会将活跃元素作为聚焦元素，即使 DOM 焦点在有属性 aria-activedescendant 的元素上。而且，当 aria-activedescendant 的值发生改变，辅助技术会收到焦点变化的事件，这和 DOM 焦点发生变化是等价的。
+
+下面是使用 aria-activedescendant 来管理焦点的步骤。
+- 当容器元素有支持 aria-activedescendant 的 ARIA 的角色，并且加载和创建完成，请确保：
+	- 容器元素要像在[组件之间的键盘导航（Tab 序列）](#组件之间的键盘导航（Tab-序列）)里介绍的，要被包含在 tab 序列，或者要被实现为一个[流动 tabindex](#使用流动-tabindex-管理组件内的焦点)；
+	- 当微件需要聚焦的时候，`aria-activedescendant="IDREF"` 的 IDREF 就是容器内活跃元素的 ID。被引用的元素要满足下面介绍的 DOM 关系。
+- 当容器元素被聚焦，为活跃元素添加视觉上的聚焦指示，确保活跃元素滚动到了视线内；
+- 当微件内有焦点，用户按下导航键想要移动焦点，例如方向键：
+	- 改变容器元素的 `aria-activedescendant` 值，来指向一个元素来告诉辅助技术当前活跃的元素；
+	- 移动视觉指示效果，有必要的话要滚动到视线区域。
+- 如果设计上要求用户通过 <kbd>Tab</kbd> 和 <kbd>Shift+Tab</kbd> 聚焦组件的指定元素，那么当容器失焦的时候也要检查 aria-activedescendant 有没有指向目标元素，如果没有，要设置 aria-activedescendant 指向目标元素。
+
+[aria-activedescendant 规范](https://w3c.github.io/aria/#aria-activedescendant)对于被聚焦的元素，含有属性 aria-activedescendant 以及作为属性值的被指向的被当作活跃的元素，在它们之间的 DOM 的关系上设定了重要的限制。下面属性条件的每一个都要被满足。
+1. 被引用的活跃元素是被聚焦的发出引用的元素的后代；
+2. 被聚焦的发起引用的元素有属性 [aria-owns](https://w3c.github.io/aria/#aria-owns)，属性的值是被引用元素的 ID；
+3. 被聚焦的发起引用的元素的角色是 combobox、textbox 和 serchbox 其中之一，并且具有属性 [aria-controls](https://w3c.github.io/aria/#aria-controls)，该属性的值引用支持 aria-activedescendant 的角色的元素：
+	1. 被引用的活跃元素是被控制元素的后代；
+	2. 被控制元素有一个指定的 [aria-owns](https://w3c.github.io/aria/#aria-owns) 的值，该值是被引用的活跃元素的 ID。
+
+## 禁用状态控件的可聚焦性
+
 > to be continued
-
-
 
 
 
