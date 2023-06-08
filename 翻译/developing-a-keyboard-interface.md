@@ -175,9 +175,20 @@ Tabindex 的值会产生以下影响。
 
 ## 常见功能的按键分配约定
 
+下面的按键绑定可以被用在任何与其相关的习惯性功能的场景里。虽然 Windows 和 Linux 上的按键绑定的实现可以被用在 macOS 上，但使用 macOS 自己的按键绑定对用户来说会更可识别、更直观。有的时候，它也可以避免系统和浏览器的按键冲突。
+
+| 功能 | Windows/Linux | macOS |
+|:--|:--|:--|
+| 打开 context 菜单 | <kbd>Shift + F10</kbd> |  |
+| 复制到剪贴板 | <kbd>Control + C</kbd> | <kbd>Command + C</kbd> |
+| 从剪贴板粘贴 | <kbd>Control + V</kbd> | <kbd>Command + V</kbd> |
+| 剪贴到剪贴板 | <kbd>Control + X</kbd> | <kbd>Command + X</kbd> |
+| 撤销 | <kbd>Control + Z</kbd> | <kbd>Command + Z</kbd> |
+| 重做 | <kbd>Control + Y</kbd> | <kbd>Command + Shift + Z</kbd> |
+
+## 键盘快捷键
+
 > to be continued
-
-
 
 
 
