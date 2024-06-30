@@ -23,5 +23,6 @@
   - [What makes Git so hard to use? 是什么让 Git 那么难用？](./%E7%BF%BB%E8%AF%91/What%20makes%20Git%20so%20hard%20to%20use.md)
 - [文档/](./%E6%96%87%E6%A1%A3/)
   - [transition 过渡动画组件](./%E6%96%87%E6%A1%A3/transition%20%E8%BF%87%E6%B8%A1%E5%8A%A8%E7%94%BB%E7%BB%84%E4%BB%B6.md)
+  - [23 年 8 月到 24 年 6 月 Next.js 12 的性能和 SEO 实践](./文档/23年8月到24年6月Next.js12的性能和SEO实践.md)
 - [源码/](./%E6%BA%90%E7%A0%81/)
   - [过渡动画组件](./%E6%BA%90%E7%A0%81/%E8%BF%87%E6%B8%A1%E5%8A%A8%E7%94%BB%E7%BB%84%E4%BB%B6/)
