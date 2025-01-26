@@ -1089,4 +1089,5 @@ git remote rename <old_name> <name> # 修改仓库名
 - [Git 实验仓库 - git-learning](https://github.com/wswmsword/git-learning)——我创建的用于执行本学习记录里每一条命令的 git 仓库；
 - [Setting up and using Meld as your git difftool and mergetool on a Mac](https://stackoverflow.com/a/43868889)；
 - [git-fire](https://github.com/qw3rtman/git-fire)——在紧急情况下保存代码；
-- [Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/cn/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)——GitHub 创建 SSH 文档。
+- [Generating a new SSH key and adding it to the ssh-agent](https://docs.github.com/cn/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)——GitHub 创建 SSH 文档；
+- [A Fast Intro to Git Internals](https://sites.google.com/a/chromium.org/dev/developers/fast-intro-to-git-internals)——咕咕果的文档，介绍了 Git 的基本原理，包括 blob、tree、commit。

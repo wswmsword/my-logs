@@ -9,6 +9,7 @@
 - [近一年的工作](./近一年的工作.md)
 - [最近三个月编写的 transition 过渡动画组件](./%E6%9C%80%E8%BF%91%E4%B8%89%E4%B8%AA%E6%9C%88%E7%BC%96%E5%86%99%E7%9A%84%20transition%20%E8%BF%87%E6%B8%A1%E5%8A%A8%E7%94%BB%E7%BB%84%E4%BB%B6.md)
 - [翻译/](./%E7%BF%BB%E8%AF%91/)
+  - [电视空间导航](./翻译/tv-spatial-navigation.md)
   - [ARIA 标注和 ARIA 关系](./%E7%BF%BB%E8%AF%91/aria-labels-and-relationships.md)
   - [接受 #NoMouse 挑战！](./%E7%BF%BB%E8%AF%91/nomouse.md)
   - [可访问性指南](./%E7%BF%BB%E8%AF%91/accessibility-guidelines.md)
